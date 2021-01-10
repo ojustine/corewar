@@ -22,7 +22,7 @@ MEM:= memalloc memchr memcmp memcpy memmem memset memswap
 
 STRINGPATH:= string/
 STRING:= ft_chars_count ft_isint ft_strdup ft_strjoin ft_strndup ft_strsplit \
-        ft_free_split ft_strchr ft_strequ ft_strlen ft_strnlen ft_words_count
+        ft_free_split ft_strchr ft_strequ ft_strlen ft_strnlen ft_words_count ft_strnequ
 
 UTILPATH:= util/
 UTIL:= ft_assert ft_kill  ft_log_error

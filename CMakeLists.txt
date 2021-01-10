@@ -58,6 +58,7 @@ add_library(libft STATIC
         libft/src/string/ft_strchr.c
         libft/src/string/ft_strdup.c
         libft/src/string/ft_strequ.c
+        libft/src/string/ft_strnequ.c
         libft/src/string/ft_strjoin.c
         libft/src/string/ft_strlen.c
         libft/src/string/ft_strndup.c
@@ -80,5 +81,5 @@ set_target_properties(libft PROPERTIES PUBLIC_HEADER
         libft/inc/util.h)
 
 add_executable(corewar $<TARGET_OBJECTS:libft>
-        src/main.c
+		src/vm/main.c
 		inc/op.h)

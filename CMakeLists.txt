@@ -81,5 +81,5 @@ set_target_properties(libft PROPERTIES PUBLIC_HEADER
         libft/inc/util.h)
 
 add_executable(corewar $<TARGET_OBJECTS:libft>
-		src/vm/main.c
-		inc/op.h)
+		inc/op.h
+		src/main.c)

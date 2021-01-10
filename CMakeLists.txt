@@ -17,6 +17,7 @@ add_library(libft STATIC
 		libft/inc/mem.h
 		libft/inc/str.h
 		libft/inc/util.h
+		libft/inc/logger.h
         libft/src/array_list/arrlist_new.c
         libft/src/array_list/arrlist_peek.c
         libft/src/array_list/arrlist_pop.c

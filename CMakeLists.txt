@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 project(corewar C)
 
-#set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 99)
 
 set(CMAKE_C_FLAGS " -Wall -Wextra -Wshadow -pedantic")
 
@@ -31,6 +31,7 @@ add_library(libft STATIC
         libft/src/array_list/arrlisti_pop.c
         libft/src/array_list/arrlisti_push.c
         libft/src/array_list/arrlisti_utils.c
+        libft/src/conv/ft_atol.c
         libft/src/hash_map/hash_map_destroy.c
         libft/src/hash_map/hash_map_get.c
         libft/src/hash_map/hash_map_iterate.c

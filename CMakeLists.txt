@@ -67,7 +67,7 @@ add_library(libft STATIC
         libft/src/string/ft_words_count.c
         libft/src/util/ft_assert.c
         libft/src/util/ft_kill.c
-        libft/src/util/ft_log_error.c)
+        libft/src/util/ft_log_error.c libft/src/regex/regex.c libft/inc/regex_.h)
 
 set_target_properties(libft PROPERTIES PUBLIC_HEADER
         libft/inc/array_list.h

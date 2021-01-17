@@ -115,6 +115,7 @@ add_library(libft STATIC
 		libft/src/io/ft_printf/number_processing.c
 		libft/src/io/ft_printf/string_processing.c
 		)
+        libft/src/util/ft_log_error.c libft/src/regex/regex.c libft/inc/regex_.h)
 
 set_target_properties(libft PROPERTIES PUBLIC_HEADER
         libft/inc/array_list.h

@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include "hash_map.h"
 
-void	hashmap_destroy(t_hashmap **hmap)
+void	hashmap_destroy(t_hashmap **hmap, void (*f)(void *))
 {
 	register size_t				i;
 	register t_hashmap_entry	*entry;
@@ -25,7 +25,11 @@ void	hashmap_destroy(t_hashmap **hmap)
 	{
 		entry = &(*hmap)->storage[i++];
 		if (entry->key)
+		{
 			free(entry->key);
+			if (f)
+				f(entry->val);
+		}
 	}
 	free((*hmap)->storage);
 	free(*hmap);

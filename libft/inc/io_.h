@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IO_H
-# define IO_H
+#ifndef IO__H
+# define IO__H
 
 # define BUFF_SIZE 512
 

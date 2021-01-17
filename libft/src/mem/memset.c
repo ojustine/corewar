@@ -12,6 +12,7 @@
 
 #include <stddef.h>
 #include <limits.h>
+#include "mem.h"
 
 #define ONES	((size_t)-1 / UCHAR_MAX)
 
@@ -39,10 +40,10 @@ static inline void	set_64(size_t *restrict b64, const size_t c64)
 
 void				*ft_memset(void *b, int c, size_t n)
 {
-	register size_t *restrict			b64;
-	register unsigned char *restrict	b8;
-	register size_t						xn;
-	register const size_t				c64 = ONES * (unsigned char)c;
+	register size_t *restrict	b64;
+	register t_byte *restrict	b8;
+	register size_t				xn;
+	register const size_t		c64 = ONES * (t_byte)c;
 
 	b64 = (size_t *)b;
 	xn = n / (sizeof(size_t) * 8);
@@ -59,7 +60,7 @@ void				*ft_memset(void *b, int c, size_t n)
 		*b64++ = c64;
 		xn--;
 	}
-	b8 = (unsigned char *)b64;
+	b8 = (t_byte *)b64;
 	n %= sizeof(size_t);
 	while (n-- > 0)
 		*b8++ = c;

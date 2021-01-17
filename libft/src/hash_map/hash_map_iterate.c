@@ -32,5 +32,9 @@ void	*hashmap_iter(t_hashmap *hmap, size_t *iter, void **keyp, void **valp)
 			*valp = entry->val;
 		return (entry->key);
 	}
+	if (keyp)
+		*keyp = NULL;
+	if (valp)
+		*valp = NULL;
 	return (NULL);
 }

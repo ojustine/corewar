@@ -28,13 +28,13 @@
 
 void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-	unsigned char *restrict			d8;
-	const unsigned char *restrict	s8 = src;
-	size_t *restrict				d64;
-	const size_t *restrict			s64 = src;
-	register size_t					i;
+	t_byte *restrict		d8;
+	const t_byte *restrict	s8 = src;
+	size_t *restrict		d64;
+	const size_t *restrict	s64 = src;
+	register size_t			i;
 
-	d8 = (unsigned char *)dst;
+	d8 = (t_byte *)dst;
 	d64 = (size_t *)dst;
 	i = 0;
 	while (i < (n / sizeof(size_t)))
@@ -68,7 +68,7 @@ void	*ft_memccpy(void *dst, const void *src, int c, size_t n)
 	const void *p = ft_memchr(src, c, n);
 
 	if (p != NULL)
-		return (ft_memcpy(dst, src, p - src + 1));
+		return (ft_memcpy(dst, src, (t_byte *)p - (t_byte *)src + 1));
 	return (ft_memcpy(dst, src, n));
 }
 
@@ -92,7 +92,7 @@ void	*ft_memccpy(void *dst, const void *src, int c, size_t n)
 
 void	*ft_mempcpy(void *dst, const void *src, size_t n)
 {
-	return (ft_memcpy(dst, src, n) + n);
+	return ((t_byte *)ft_memcpy(dst, src, n) + n);
 }
 
 /*
@@ -108,17 +108,17 @@ void	*ft_mempcpy(void *dst, const void *src, size_t n)
 
 void	*ft_memmove(void *dst, const void *src, size_t n)
 {
-	const unsigned char *restrict	s8 = (const unsigned char *)src + n;
-	unsigned char *restrict			d8;
-	const size_t *restrict			s64 = (const size_t *)(src + n);
-	size_t *restrict				d64;
-	register size_t					i;
+	const t_byte *restrict	s8 = (const t_byte *)src + n;
+	t_byte *restrict		d8;
+	const size_t *restrict	s64 = (const size_t *)((const t_byte *)src + n);
+	size_t *restrict		d64;
+	register size_t			i;
 
-	d8 = (unsigned char *)dst + n;
-	d64 = (size_t *)(dst + n);
+	d8 = (t_byte *)dst + n;
+	d64 = (size_t *)((t_byte *)dst + n);
 	if (dst == src)
 		return (dst);
-	else if (dst - src >= (long long)n)
+	else if ((t_byte *)dst - (t_byte *)src >= (long long)n)
 		return (ft_memcpy(dst, src, n));
 	i = 0;
 	while (i < (n / sizeof(size_t)))

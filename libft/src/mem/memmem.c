@@ -14,13 +14,13 @@
 
 #define ALPHABET_SIZE	(UCHAR_MAX + 1)
 
-static inline size_t	hash2(const unsigned char *p)
+static inline size_t	hash2(const t_byte *p)
 {
 	return (((size_t)p[0] - ((size_t)p[-1] << 3U)) % ALPHABET_SIZE);
 }
 
-static inline size_t	do_shift(unsigned char *shift_table, const size_t n,
-						const unsigned char *restrict ne, size_t *offset)
+static inline size_t	do_shift(t_byte *shift_table, const size_t n,
+						const t_byte *restrict ne, size_t *offset)
 {
 	register size_t	i;
 	size_t			shift;
@@ -38,8 +38,8 @@ static inline size_t	do_shift(unsigned char *shift_table, const size_t n,
 	return (shift);
 }
 
-static void				*search_256_bytes(const unsigned char *restrict hs,
-						const unsigned char *hs_end, const unsigned char *ne,
+static void				*search_256_bytes(const t_byte *restrict hs,
+						const t_byte *hs_end, const t_byte *ne,
 						const size_t ne_len)
 {
 	unsigned char	shift_table[ALPHABET_SIZE];
@@ -72,11 +72,11 @@ static void				*search_256_bytes(const unsigned char *restrict hs,
 static void				*search_raita(const void *haystack, size_t hs_len,
 						const void *needle, size_t ne_len)
 {
-	const unsigned char *restrict	hs = (unsigned char *)haystack;
-	const unsigned char *restrict	ne = (unsigned char *)needle;
-	size_t							shift_table[UCHAR_MAX + 1];
-	unsigned char					c;
-	register size_t					i;
+	const t_byte *restrict	hs = (t_byte *)haystack;
+	const t_byte *restrict	ne = (t_byte *)needle;
+	size_t					shift_table[UCHAR_MAX + 1];
+	t_byte					c;
+	register size_t			i;
 
 	i = 0;
 	while (i < UCHAR_MAX + 1)
@@ -115,11 +115,11 @@ static void				*search_raita(const void *haystack, size_t hs_len,
 void					*ft_memmem(const void *haystack, size_t hs_len,
 						const void *needle, size_t ne_len)
 {
-	const unsigned char *restrict	hs = (const unsigned char *)haystack;
-	const unsigned char *restrict	ne = (const unsigned char *)needle;
-	const unsigned char				*end = hs + hs_len - ne_len;
-	register uint32_t				nw;
-	register uint32_t				hw;
+	const t_byte *restrict	hs = (const t_byte *)haystack;
+	const t_byte *restrict	ne = (const t_byte *)needle;
+	const t_byte			*end = hs + hs_len - ne_len;
+	register uint32_t		nw;
+	register uint32_t		hw;
 
 	if (ne_len == 0)
 		return ((void *)haystack);
@@ -135,7 +135,7 @@ void					*ft_memmem(const void *haystack, size_t hs_len,
 		hs++;
 		while (hs <= end && hw != nw)
 			hw = hw << 16 | *++hs;
-		return (hw == nw ? (void *)hs - 1 : NULL);
+		return (hw == nw ? (void *)(hs - 1) : NULL);
 	}
 	if (ne_len <= ALPHABET_SIZE)
 		return (search_256_bytes(hs, end, ne, ne_len));

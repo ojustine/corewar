@@ -28,5 +28,9 @@ void	*ft_free_split(char **split);
 int		ft_strequ(char const *s1, char const *s2);
 int		ft_strnequ(char const *s1, char const *s2, size_t n);
 int		ft_isint(char *str);
+char	*ft_concat(size_t count, ...);
+int		ft_strany(char const *str, int c);
+void	ft_strrev(register char *begin, register char *end);
+size_t	ft_wstrlen(const wint_t *s);
 
 #endif

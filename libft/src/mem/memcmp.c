@@ -11,12 +11,13 @@
 /* ************************************************************************** */
 
 #include <stddef.h>
+#include "mem.h"
 
 static inline int	bytes_cmp(const void *b1, const void *b2, const size_t n)
 {
-	const unsigned char *restrict	s1 = (unsigned char *)b1;
-	const unsigned char *restrict	s2 = (unsigned char *)b2;
-	register size_t					i;
+	const t_byte *restrict	s1 = (t_byte *)b1;
+	const t_byte *restrict	s2 = (t_byte *)b2;
+	register size_t			i;
 
 	i = 0;
 	while (i < n)

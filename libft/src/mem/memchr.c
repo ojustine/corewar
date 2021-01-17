@@ -12,6 +12,7 @@
 
 #include <limits.h>
 #include <stddef.h>
+#include "mem.h"
 
 static inline size_t	hasbyte(size_t word, unsigned char byte)
 {
@@ -37,16 +38,16 @@ static inline size_t	hasbyte(size_t word, unsigned char byte)
 
 void					*ft_memchr(const void *src, int c, size_t n)
 {
-	const unsigned char *restrict	s8 = (const unsigned char *)src;
-	const size_t *restrict			s64;
+	const t_byte *restrict	s8 = (const t_byte *)src;
+	const size_t *restrict	s64;
 
-	c = (unsigned char)c;
+	c = (t_byte)c;
 	while (((size_t)s8 & (sizeof(size_t) - 1)) && n && *s8 != c)
 	{
 		s8++;
 		n--;
 	}
-	if (n && *s8 != c)
+	if (n >= sizeof(size_t) && *s8 != c)
 	{
 		s64 = (const void *)s8;
 		while (n >= sizeof(size_t) && !hasbyte(*s64, c))
@@ -79,29 +80,29 @@ void					*ft_memchr(const void *src, int c, size_t n)
 
 void					*ft_memrchr(const void *src, int c, size_t n)
 {
-	const unsigned char *restrict	s8 = (const unsigned char *)src + n;
-	const size_t *restrict			s64;
-	register int					i;
+	const t_byte *restrict	s8 = (const t_byte *)src + n - 1;
+	const size_t *restrict	s64;
 
 	c = (unsigned char)c;
-	while (((size_t)s8 & (sizeof(size_t) - 1)) && n)
-		if (*--s8 == c)
-			return ((void *)s8);
-	s64 = (const void *)s8;
-	while (n >= sizeof(size_t))
+	while (((size_t)s8 & (sizeof(size_t) - 1)) && n && *s8 != c)
 	{
-		n -= sizeof(size_t);
-		if (hasbyte(*--s64, c))
-		{
-			s8 = (const unsigned char *)s64;
-			i = -1;
-			while (++i < (int)sizeof(size_t))
-				if (s8[i] == c)
-					return ((void *)&s8[i]);
-		}
-	}
-	s8 = (const void *)s64;
-	while (s8 && *s8 != c && n--)
 		s8--;
+		n--;
+	}
+	if (n >= sizeof(size_t) && *s8 != c)
+	{
+		s64 = (const void *)(s8 - sizeof(size_t));
+		while (n >= sizeof(size_t) && !hasbyte(*s64, c))
+		{
+			--s64;
+			n -= sizeof(size_t);
+		}
+		s8 = (const void *)(s64 + 1);
+	}
+	while (n && *s8 != c)
+	{
+		n--;
+		s8--;
+	}
 	return (n ? (void *)s8 : (void *)0);
 }

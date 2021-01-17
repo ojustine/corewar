@@ -25,6 +25,8 @@
 ** @{
 */
 
+typedef unsigned char t_byte;
+
 /*
 ** @file memalloc.c
 */

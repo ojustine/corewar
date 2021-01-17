@@ -26,7 +26,9 @@ size_t				ft_strlen(const char *s)
 	const char *restrict	s8 = s;
 	const size_t *restrict	s64;
 
-	while (((size_t)s8 & sizeof(size_t) - 1) && *s8)
+	if (!s)
+		return (0);
+	while (((size_t)s8 & (sizeof(size_t) - 1)) && *s8)
 		s8++;
 	if (*s8)
 	{

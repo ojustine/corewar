@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include <stdarg.h>
+#include <stddef.h>
+#include <unistd.h>
 #include "conv.h"
 #include "ft_printf_.h"
 

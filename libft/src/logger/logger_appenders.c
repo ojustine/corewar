@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <time.h>
+#include <errno.h>
 #include "util.h"
 #include "error.h"
 #include "str.h"

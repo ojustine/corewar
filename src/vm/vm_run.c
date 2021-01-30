@@ -25,16 +25,16 @@ void	vm_run(t_vm *vm)
 	//todo print_intro
 	vm_set_champions(vm);
 	vm_cursor_set_initial(vm);
-	while (vm->cursors->size)
-	{
-		if (vm->config & VM_DUMP && !(vm->cycles % vm->dump_cycles))
-		{
-			//todo vm_dump
-			exit(0);
-		}
-		exec_cycle(vm);
-		if (vm->cycles_to_die == vm->cycles_after_check
-			|| vm->cycles_to_die <= 0)
-			cycles_to_die_check(vm);
-	}
+//	while (vm->cursors->size)
+//	{
+//		if (vm->config & VM_DUMP && !(vm->cycles % vm->dump_cycles))
+//		{
+//			//todo vm_dump
+//			exit(0);
+//		}
+//		exec_cycle(vm);
+//		if (vm->cycles_to_die == vm->cycles_after_check
+//			|| vm->cycles_to_die <= 0)
+//			cycles_to_die_check(vm);
+//	}
 }

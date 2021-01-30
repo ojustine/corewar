@@ -7,8 +7,8 @@
 
 enum	e_endian
 {
-	LITTLE_ENDIAN = 0xfffe,
-	BIG_ENDIAN = 0xfeff
+	FT_LITTLE_ENDIAN = 0xfffe,
+	FT_BIG_ENDIAN = 0xfeff
 };
 
 # ifdef WIN32

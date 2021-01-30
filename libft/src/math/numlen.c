@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stddef.h>
 
 size_t	math_intlen(register int32_t n)
 {

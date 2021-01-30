@@ -14,6 +14,7 @@
 # define CONV_H
 
 #include <stdint.h>
+#include <stddef.h>
 
 long long	ft_atol(const char *str);
 size_t		ft_ultoa_base(unsigned long long value, char *buff, int base,

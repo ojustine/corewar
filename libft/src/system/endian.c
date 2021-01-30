@@ -10,9 +10,9 @@ enum e_endian endian()
 	i = 1;
 	p = (char *)&i;
 	if (p[0] == 1)
-		return (LITTLE_ENDIAN);
+		return (FT_LITTLE_ENDIAN);
 	else
-		return (BIG_ENDIAN);
+		return (FT_BIG_ENDIAN);
 }
 
 void	*to_sys_endian(enum e_endian from, void *pv, size_t size)

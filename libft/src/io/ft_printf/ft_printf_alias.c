@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "ft_printf.h"
 
 int					ft_vprintf(const char *format, va_list ap)

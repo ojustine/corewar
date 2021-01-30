@@ -19,7 +19,7 @@ int main(/*int ac, char **av*/)
 	t_vm	*vm;
 
 	logger_set_app_log_lvl(L_STDOUT, TRACE);
-	char *s[] = {"", "-n", "2", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\zork.cor", "-c"};
+	char *s[] = {"", "-n", "2", "/Users/ojustine/Desktop/corewar/bee_gees.cor", "/Users/ojustine/Desktop/corewar/zork.cor", "-c"};
 	//char *s[] = {"", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\zork.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor"};
 
 	vm = ft_memalloc(sizeof(t_vm));
@@ -30,6 +30,7 @@ int main(/*int ac, char **av*/)
 	if (!vm_load_champions(vm, 6, s))
 		ft_exit(EXIT_FAILURE, "Loading champions failed");
 	vm_run(vm);
+	ft_exit(0, NULL);
 
 //	clock_t begin = clock();
 //

@@ -3,6 +3,7 @@
 #include "mem.h"
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include "ft_printf_.h"
 
 void			fxd_del(t_fxd *fp1, t_fxd *fp2)

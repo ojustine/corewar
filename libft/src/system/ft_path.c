@@ -3,6 +3,7 @@
 #include <errno.h>
 #include "system.h"
 #include "mem.h"
+#include "str.h"
 
 int	ft_mkdir(const char *path)
 {
@@ -11,14 +12,14 @@ int	ft_mkdir(const char *path)
 	return (mkdir(path));
 #else
 
-	return (mkdir(_path, S_IRWXU));
+	return (mkdir(path, S_IRWXU));
 #endif
 
 }
 
 int	ft_mkpath(const char *path)
 {
-	const size_t	len = strlen(path);
+	const size_t	len = ft_strlen(path);
 	char			fpath[PATH_MAX];
 	register char	*p;
 
@@ -45,7 +46,7 @@ int	ft_mkpath(const char *path)
 
 int	ft_open_path(const char *path, int flag, mode_t mode)
 {
-	const size_t	len = strlen(path);
+	const size_t	len = ft_strlen(path);
 	char			fpath[PATH_MAX];
 	register char	*p;
 

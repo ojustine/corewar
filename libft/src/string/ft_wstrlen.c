@@ -1,4 +1,4 @@
-#include <stddef.h>
+#include <wctype.h>
 
 size_t	ft_wstrlen(const wint_t *s)
 {

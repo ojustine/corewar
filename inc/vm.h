@@ -2,6 +2,7 @@
 # define VM_H
 
 # include "op.h"
+# include "op_struct.h"
 # include "mem.h"
 # include "list.h"
 # include "logger.h"
@@ -44,6 +45,7 @@ typedef struct			s_champ
 typedef struct			s_cursor
 {
 	int					id;
+	t_op				*op;
 	int					carry;
 	t_byte				op_code;
 	int					last_live;

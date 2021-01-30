@@ -19,6 +19,7 @@ int main(/*int ac, char **av*/)
 	t_vm	*vm;
 
 	logger_set_app_log_lvl(L_STDOUT, TRACE);
+	logger_switch_flags(L_USE_COLORS, L_ENABLE);
 	char *s[] = {"", "-n", "2", "/Users/ojustine/Desktop/corewar/bee_gees.cor", "/Users/ojustine/Desktop/corewar/zork.cor", "-c"};
 	//char *s[] = {"", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\zork.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor"};
 

@@ -52,14 +52,14 @@ static void	log_prefix(enum e_log_level log_lvl, const char *func,
 	}
 	if (g_logger.flags & L_SHOW_FUNC && func)
 		log_func(app->fd, func);
-	if (g_logger.flags & L_USE_COLORS && app->fd < 3)
-		ft_dprintf(app->fd, L_CLR_RESET);
 }
 
 static void	log_line(int fd, const char *fmt, va_list ap)
 {
 	ft_vdprintf(fd, fmt, ap);
 	ft_dprintf(fd, "\n");
+	if (g_logger.flags & L_USE_COLORS && fd < 3)
+		ft_dprintf(fd, L_CLR_RESET);
 }
 
 void		do_log(enum e_log_level log_lvl, const char *func, const char *fmt,

@@ -2,71 +2,83 @@
 # define VM_H
 
 # include "op.h"
+# include "mem.h"
+# include "list.h"
 # include "logger.h"
 # include <stdint.h>
 
-# define	DEFAULT_DUMP_CYCLES		1500
-# define	DEFAULT_DUMP_BYTENESS	32
+# define	COR_EXT				".cor"
+# define	DUMP_BYTENESS		32
 
 enum					e_vm_flags
 {
-	VM_DUMP = (1U),
-	VM_STEP = (1U << 1),
-	VM_AFF = (1U << 2),
-	VM_VERBOSE = (1U << 3)
+	VM_VERBOSE_LIVE = (1U),
+	VM_VERBOSE_CYCLE = (1U << 1),
+	VM_VERBOSE_OP = (1U << 2),
+	VM_VERBOSE_DEATH = (1U << 3),
+	VM_VERBOSE_MOVE = (1U << 4),
+	VM_DUMP = (1U << 5),
+	VM_STEP = (1U << 6),
+	VM_AFF = (1U << 7),
+	VM_COLOR = (1U << 8)
 };
 
-typedef struct		s_header
+typedef struct					s_header
 {
-	uint32_t		magic;
-	uint8_t			prog_name[PROG_NAME_LENGTH];
-	uint32_t		null1;
-	uint32_t		prog_size;
-	uint8_t			comment[COMMENT_LENGTH];
-	uint32_t		null2;
-}					t_header;
+	uint32_t					magic;
+	int8_t						prog_name[PROG_NAME_LENGTH];
+	uint32_t					nil1;
+	uint32_t					prog_size;
+	int8_t						comment[COMMENT_LENGTH];
+	uint32_t					nil2;
+}								t_header;
 
 typedef struct			s_champ
 {
-	int32_t			id;
 	t_header		header;
-	int32_t			code_size;
-	uint8_t			*code;
-	size_t			last_live;
+	t_byte			code[CHAMP_MAX_SIZE + 1];
+	int				id;
+	int				last_live;
 }						t_champ;
 
-typedef struct			s_carriage
+typedef struct			s_cursor
 {
-	uint32_t			id;
-	t_bool				carry;
-	uint8_t				op_code;
-	ssize_t				last_live;
+	int					id;
+	int					carry;
+	t_byte				op_code;
+	int					last_live;
 	int					cycles_to_exec;
-	uint8_t				args_types[3];
-	int32_t				pc;
-	uint32_t			step;
-	int32_t				reg[REG_NUMBER];
-	t_champ				*player;
-	struct s_carriage	*next;
-}						t_carriage;
+	t_byte				args_types[3];
+	int					pc;
+	int					step;
+	t_byte				reg[REG_NUMBER + 1];
+	t_champ				*parent;
+}						t_cursor;
 
 typedef struct	s_vm
 {
-	unsigned	flags;
+	unsigned	config;
 	int			dump_cycles;
 	int			dump_byteness;
+	t_byte		arena[MEM_SIZE];
+	t_byte		marks[MEM_SIZE];
+	t_champ		*champ[MAX_PLAYERS];
+	size_t		champ_size;
+	t_list		*cursors;
 	int			cycles;
-	int			option_v[4];
-	int			option_g[2];
+	int			cycles_after_check;
 	int			opt_num;
 	int			check_nbr;
-	char		*players[MAX_PLAYERS + 1];
-	t_champ		champ[MAX_PLAYERS];
-//	t_array		processes;
 	int			process_index;
-	int			champ_size;
 	int			last_dead_champ;
-	int			winner;
+	int			last_alive;
 }				t_vm;
+
+int	vm_options(t_vm *vm, int ac, char **av);
+int	vm_load_champions(t_vm *vm, int ac, char **av);
+int	vm_read_champion(t_champ *champ, const char *path);
+t_cursor	*vm_cursor_new(t_champ *parent, int pc);
+void		vm_cursor_set_initial(t_vm *vm);
+void	vm_run(t_vm *vm);
 
 #endif

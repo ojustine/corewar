@@ -79,10 +79,16 @@ add_library(libft STATIC
 		libft/src/string/ft_strany.c
 		libft/src/string/ft_strrev.c
 		libft/src/string/ft_wstrlen.c
+		libft/src/string/ft_strstart.c
+		libft/src/string/ft_strend.c
         libft/src/util/ft_assert.c
         libft/src/util/ft_kill.c
         libft/src/util/ft_log_error.c
+		libft/src/util/ft_exit.c
 		libft/src/system/ft_path.c
+		libft/src/system/endian.c
+		libft/src/system/byte_swap_unsigned.c
+		libft/src/system/byte_swap_signed.c
 		libft/src/logger/logger_.h
 		libft/src/logger/logger.c
 		libft/src/logger/logger_appenders.c
@@ -114,8 +120,10 @@ add_library(libft STATIC
 		libft/src/io/ft_printf/get_format_arg.c
 		libft/src/io/ft_printf/number_processing.c
 		libft/src/io/ft_printf/string_processing.c
+
+        libft/src/util/ft_log_error.c
+		libft/inc/ft_regex.h libft/src/regex/o_regex.c libft/src/regex/o_regex_compile.c
 		)
-        libft/src/util/ft_log_error.c libft/src/regex/regex.c libft/inc/regex_.h)
 
 set_target_properties(libft PROPERTIES PUBLIC_HEADER
         libft/inc/array_list.h
@@ -130,4 +138,4 @@ set_target_properties(libft PROPERTIES PUBLIC_HEADER
 
 add_executable(corewar $<TARGET_OBJECTS:libft>
 		inc/op.h
-		src/main.c inc/vm.h src/vm/options/vm_options.c)
+		src/main.c inc/vm.h src/vm/vm_options.c src/vm/vm_champion_load.c src/vm/vm_champion_read.c src/vm/vm_print.c src/vm/vm_options_logger.c src/vm/vm_run.c src/vm/vm_cursor.c)

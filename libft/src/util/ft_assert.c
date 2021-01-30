@@ -11,14 +11,14 @@
 /* ************************************************************************** */
 
 #include <signal.h>
-#include <stdlib.h>
 #include "util.h"
+#include "logger.h"
 
 void	ft_assert(int to_check, const char *func, const char *message)
 {
 	if (!to_check)
 	{
-		ft_log_error(message, "ASSERTION", func, NULL);
-		exit(SIGABRT);
+		log_error(func, "Assertion failed: %s", message);
+		ft_exit(SIGABRT, "Assertion error");
 	}
 }

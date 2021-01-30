@@ -1,7 +1,6 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <errno.h>
-#include <fcntl.h>
 #include "system.h"
 #include "mem.h"
 
@@ -26,7 +25,7 @@ int	ft_mkpath(const char *path)
 	errno = 0;
 	if (len > sizeof(fpath) - 1)
 	{
-		errno = ENAMETOOLONG;		//todo log error
+		errno = ENAMETOOLONG;
 		return (-1);
 	}
 	ft_memcpy(fpath, path, len + 1);
@@ -34,12 +33,12 @@ int	ft_mkpath(const char *path)
 	while (p)
 	{
 		*p = '\0';
-		if (ft_mkdir(fpath) != 0 && errno != EEXIST)		//todo log error
+		if (ft_mkdir(fpath) != 0 && errno != EEXIST)
 			return (-1);
 		*p = FILE_SEP_CHAR;
 		p = ft_memchr(p + 1, FILE_SEP_CHAR, len - (p - fpath));
 	}
-	if (ft_mkdir(fpath) != 0 && errno != EEXIST)			//todo log error
+	if (ft_mkdir(fpath) != 0 && errno != EEXIST)
 		return (-1);
 	return (0);
 }
@@ -53,17 +52,20 @@ int	ft_open_path(const char *path, int flag, mode_t mode)
 	errno = 0;
 	if (len > sizeof(fpath) - 1)
 	{
-		errno = ENAMETOOLONG;		//todo log error
+		errno = ENAMETOOLONG;
 		return (-1);
 	}
-	ft_memcpy(fpath, path, len + 1);
-	p = ft_memrchr(fpath, FILE_SEP_CHAR, len);
-	if (p)
+	if (flag & O_CREAT)
 	{
-		*p = '\0';
-		if (ft_mkpath(fpath) == -1)
-			return (-1);
-		*p = FILE_SEP_CHAR;
+		ft_memcpy(fpath, path, len + 1);
+		p = ft_memrchr(fpath, FILE_SEP_CHAR, len);
+		if (p)
+		{
+			*p = '\0';
+			if (ft_mkpath(fpath) == -1)
+				return (-1);
+			*p = FILE_SEP_CHAR;
+		}
 	}
 	return (open(path, flag, mode));
 }

@@ -3,29 +3,55 @@
 #include <fcntl.h>
 #include <hash_map.h>
 #include <mem.h>
-#include "regex_.h"
+#include <util.h>
+#include <str.h>
+#include <list.h>
+#include <ft_printf.h>
+#include <time.h>
+#include "system.h"
+#include "vm.h"
+#include "ft_regex.h"
 
-#define LITTLE_ENDIAN 0
-#define BIG_ENDIAN    1
 
-int endian() {
-	int i = 1;
-	char *p = (char *)&i;
 
-	if (p[0] == 1)
-		return LITTLE_ENDIAN;
-	else
-		return BIG_ENDIAN;
-}
-
-int main()
+int main(/*int ac, char **av*/)
 {
-	char tab[1000];
-	ft_bzero(tab, sizeof(tab));
+	t_vm	*vm;
 
-	re_comp("\\(A+.Z\\)");
-	printf("%d\n", re_exec("ASZ"));
-	printf("%d\n", re_exec("AOZ"));
-	re_subs("\\1fgrfg\\1\\2", tab);
-	printf("%s", tab);
+	logger_set_app_log_lvl(L_STDOUT, TRACE);
+	char *s[] = {"", "-n", "2", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\zork.cor", "-c"};
+	//char *s[] = {"", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\zork.cor", "C:\\Users\\Ojustine\\Desktop\\corewar\\bee_gees.cor"};
+
+	vm = ft_memalloc(sizeof(t_vm));
+	ft_at_exit_ptr(free, vm, "Freeing VM");
+
+	if (!vm_options(vm, 6, s))
+		ft_exit(EXIT_FAILURE, "Resolving arguments failed");
+	if (!vm_load_champions(vm, 6, s))
+		ft_exit(EXIT_FAILURE, "Loading champions failed");
+	vm_run(vm);
+
+//	clock_t begin = clock();
+//
+////	char *s;
+////	t_list *l = list_new();
+////	for (int i = 0; i < 1000000; i++)
+////	{
+////		list_push_back(l, "m");
+////	}
+////	s = malloc(1000001);
+////	int i = 0;
+////	for (; i < 1000000; i++)
+////	{
+////		s[i] = *((char*)list_pop_front(l));
+////	}
+////	s[i] = '\0';
+////	ft_printf(s);
+//
+//	for (int i = 0; i < 1000000; i++)
+//		write(1, "\bm", 2);
+//
+//	clock_t end = clock();
+//	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+//	printf("\n%lf", time_spent);
 }

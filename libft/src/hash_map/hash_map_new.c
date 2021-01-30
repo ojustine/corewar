@@ -15,7 +15,7 @@
 #include "mem.h"
 
 /*
-** add flags: copy val, copy key, auto increase, auto decrease
+** add config: copy val, copy key, auto increase, auto decrease
 ** prime num for every pow2
 */
 

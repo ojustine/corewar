@@ -14,11 +14,11 @@
 #include "str.h"
 #include "conv.h"
 
-int		ft_isint(char *str)
+int		ft_isint(const char *str)
 {
 	const long long	nb = ft_atol(str);
 
-	if (*str == '-' || *str == '+')
+	if (*str == '-')
 		str++;
 	if (*str == '\0' || (*str == '0' && *(str + 1) != '\0'))
 		return (0);
@@ -31,6 +31,25 @@ int		ft_isint(char *str)
 		str++;
 	}
 	if (nb < INT_MIN || nb > INT_MAX)
+		return (0);
+	return (1);
+}
+
+int		ft_isuint(const char *str)
+{
+	const long long	nb = ft_atol(str);
+
+	if (*str == '\0' || (*str == '0' && *(str + 1) != '\0'))
+		return (0);
+	if (ft_strlen(str) > 10)
+		return (0);
+	while (*str)
+	{
+		if (*str < '0' || *str > '9')
+			return (0);
+		str++;
+	}
+	if (nb < 0 || nb > UINT_MAX)
 		return (0);
 	return (1);
 }

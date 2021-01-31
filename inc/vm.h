@@ -10,6 +10,9 @@
 
 # define	COR_EXT				".cor"
 # define	DUMP_BYTENESS		32
+# define OP_CODE_LEN	1
+# define ARGS_CODE_LEN	1
+# define REG_LEN		1
 
 enum					e_vm_flags
 {
@@ -45,7 +48,7 @@ typedef struct			s_champ
 typedef struct			s_cursor
 {
 	int					id;
-	t_op				*op;
+	t_op				op;
 	int					carry;
 	t_byte				op_code;
 	int					last_live;
@@ -82,5 +85,7 @@ int	vm_read_champion(t_champ *champ, const char *path);
 t_cursor	*vm_cursor_new(t_champ *parent, int pc);
 void		vm_cursor_set_initial(t_vm *vm);
 void	vm_run(t_vm *vm);
+void	vm_exec(t_vm *vm);
+void	vm_eval(t_vm *vm, t_cursor *cursor);
 
 #endif

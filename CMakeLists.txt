@@ -138,4 +138,4 @@ set_target_properties(libft PROPERTIES PUBLIC_HEADER
 
 add_executable(corewar $<TARGET_OBJECTS:libft>
 		inc/op.h inc/op_struct.h
-		src/main.c inc/vm.h src/vm/vm_options.c src/vm/vm_champion_load.c src/vm/vm_champion_read.c src/vm/vm_print.c src/vm/vm_options_logger.c src/vm/vm_run.c src/vm/vm_cursor.c)
+		src/main.c inc/vm.h src/vm/vm_options.c src/vm/vm_champion_load.c src/vm/vm_champion_read.c src/vm/vm_print.c src/vm/vm_options_logger.c src/vm/vm_run.c src/vm/vm_cursor.c src/vm/vm_exec.c src/vm/vm_eval.c src/vm/vm_util.c)

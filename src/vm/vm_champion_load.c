@@ -73,7 +73,7 @@ t_champ		*vm_new_champ(const char *str_id, char *path)
 		id = ft_atol(str_id);
 		if (id < 1 || id > MAX_PLAYERS)
 		{
-			log_warn(__func__, "Invalid id's value: '%lld'", id);
+			log_warn(__func__, "Invalid id's value: '%lld'. Use undef.", id);
 			id = -1;
 		}
 		champ->id = (int)id;
@@ -110,7 +110,6 @@ int			vm_load_champions(t_vm *vm, int ac, char **av)
 		}
 	}
 	vm_setup_champ_ids(vm, storage);
-	vm->last_alive = (int)vm->champ_size - 1;
 	log_trace(__func__, "Successfully load '%zu' champions", vm->champ_size);
 	return (1);
 }

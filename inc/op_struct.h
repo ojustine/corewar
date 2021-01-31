@@ -17,11 +17,13 @@
 typedef struct	s_op
 {
 	char		*name;
-	uint8_t		code;
-	uint8_t		args_num;
+	t_byte		code;
+	t_byte		args_num;
 	int			args_types_code;
-	uint8_t		args_types[3];
-	uint8_t		t_dir_size;
+	t_byte		args_types[3];
+	t_byte		dir_size;
+	int			cycles;
+
 }				t_op;
 
 static t_op		g_op[17] = {
@@ -31,7 +33,8 @@ static t_op		g_op[17] = {
 		.args_num = 0,
 		.args_types_code = 0,
 		.args_types = {0, 0, 0},
-		.t_dir_size = 0,
+		.dir_size = 0,
+		.cycles = 0
 	},
 	{
 		.name = "live",
@@ -39,7 +42,8 @@ static t_op		g_op[17] = {
 		.args_num = 1,
 		.args_types_code = 0,
 		.args_types = {T_DIR, 0, 0},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 10
 	},
 	{
 		.name = "ld",
@@ -47,7 +51,8 @@ static t_op		g_op[17] = {
 		.args_num = 2,
 		.args_types_code = 1,
 		.args_types = {T_DIR | T_IND, T_REG, 0},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 5
 	},
 	{
 		.name = "st",
@@ -55,7 +60,8 @@ static t_op		g_op[17] = {
 		.args_num = 2,
 		.args_types_code = 1,
 		.args_types = {T_REG, T_REG | T_IND, 0},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 5
 	},
 	{
 		.name = "add",
@@ -63,7 +69,8 @@ static t_op		g_op[17] = {
 		.args_num = 3,
 		.args_types_code = 1,
 		.args_types = {T_REG, T_REG, T_REG},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 10
 	},
 	{
 		.name = "sub",
@@ -71,7 +78,8 @@ static t_op		g_op[17] = {
 		.args_num = 3,
 		.args_types_code = 1,
 		.args_types = {T_REG, T_REG, T_REG},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 10
 	},
 	{
 		.name = "and",
@@ -79,7 +87,8 @@ static t_op		g_op[17] = {
 		.args_num = 3,
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR | T_IND, T_REG},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 6
 	},
 	{
 		.name = "or",
@@ -87,7 +96,8 @@ static t_op		g_op[17] = {
 		.args_num = 3,
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR | T_IND, T_REG},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 6
 	},
 	{
 		.name = "xor",
@@ -95,7 +105,8 @@ static t_op		g_op[17] = {
 		.args_num = 3,
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR | T_IND, T_REG},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 6
 	},
 	{
 		.name = "zjmp",
@@ -103,7 +114,8 @@ static t_op		g_op[17] = {
 		.args_num = 1,
 		.args_types_code = 0,
 		.args_types = {T_DIR, 0, 0},
-		.t_dir_size = 2,
+		.dir_size = 2,
+		.cycles = 20
 	},
 	{
 		.name = "ldi",
@@ -111,7 +123,8 @@ static t_op		g_op[17] = {
 		.args_num = 3,
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR, T_REG},
-		.t_dir_size = 2,
+		.dir_size = 2,
+		.cycles = 25
 	},
 	{
 		.name = "sti",
@@ -119,7 +132,8 @@ static t_op		g_op[17] = {
 		.args_num = 3,
 		.args_types_code = 1,
 		.args_types = {T_REG, T_REG | T_DIR | T_IND, T_REG | T_DIR},
-		.t_dir_size = 2,
+		.dir_size = 2,
+		.cycles = 25
 	},
 	{
 		.name = "fork",
@@ -127,7 +141,8 @@ static t_op		g_op[17] = {
 		.args_num = 1,
 		.args_types_code = 0,
 		.args_types = {T_DIR, 0, 0},
-		.t_dir_size = 2,
+		.dir_size = 2,
+		.cycles = 800
 	},
 	{
 		.name = "lld",
@@ -135,7 +150,8 @@ static t_op		g_op[17] = {
 		.args_num = 2,
 		.args_types_code = 1,
 		.args_types = {T_DIR | T_IND, T_REG, 0},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 10
 	},
 	{
 		.name = "lldi",
@@ -143,7 +159,8 @@ static t_op		g_op[17] = {
 		.args_num = 3,
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR, T_REG},
-		.t_dir_size = 2,
+		.dir_size = 2,
+		.cycles = 50
 	},
 	{
 		.name = "lfork",
@@ -151,7 +168,8 @@ static t_op		g_op[17] = {
 		.args_num = 1,
 		.args_types_code = 0,
 		.args_types = {T_DIR, 0, 0},
-		.t_dir_size = 2,
+		.dir_size = 2,
+		.cycles = 1000
 	},
 	{
 		.name = "aff",
@@ -159,7 +177,8 @@ static t_op		g_op[17] = {
 		.args_num = 1,
 		.args_types_code = 1,
 		.args_types = {T_REG, 0, 0},
-		.t_dir_size = 4,
+		.dir_size = 4,
+		.cycles = 2
 	}
 };
 

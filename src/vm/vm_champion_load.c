@@ -49,7 +49,7 @@ static void	vm_setup_champions_code(void)
 		pc += MEM_SIZE / g_vm.champ_size;
 		i++;
 	}
-	g_vm.last_alive = (int)g_vm.champ_size - 1;
+	g_vm.last_alive = (int)g_vm.champ_size;
 }
 
 void		vm_setup_champions_ids(t_champ **storage)

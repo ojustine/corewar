@@ -21,8 +21,8 @@ void		print_intro(void)
 void		print_winner(void)
 {
 	ft_printf("Contestant %d, \"%s\", has won !\n",
-		g_vm.last_alive + 1,
-		g_vm.champ[g_vm.last_alive]->header.prog_name);
+		g_vm.last_alive,
+		g_vm.champ[g_vm.last_alive - 1]->header.prog_name);
 }
 
 void		print_arena(void)
@@ -46,4 +46,3 @@ void		print_arena(void)
 		i += g_vm.dump_byteness;
 	}
 }
-

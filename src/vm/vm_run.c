@@ -1,7 +1,6 @@
 #include "io_.h"
 #include "str.h"
 #include "conv.h"
-#include "ft_printf.h"
 #include "util.h"
 #include "vm.h"
 
@@ -45,7 +44,7 @@ int		main(int ac, char **av)
 {
 	ft_bzero(&g_vm, sizeof(t_vm));
 
-	logger_set_app_log_lvl(L_STDOUT, DEBUG);
+	logger_set_app_log_lvl(L_STDOUT, OFF);
 	logger_switch_flags(L_USE_COLORS, L_ENABLE);
 	if (!vm_options(ac, av))
 		ft_exit(EXIT_FAILURE, "Resolving arguments failed");

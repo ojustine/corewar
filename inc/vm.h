@@ -53,7 +53,7 @@ void	vm_check(void);
 int32_t	get_arg_value(t_cursor *cursor, int index, int is_mod);
 
 void		print_intro(void);
-void		print_arena(int byteness);
+void		print_arena(void);
 void		print_winner(void);
 
 void	verbose_move_pc(intptr_t pc, intptr_t step);

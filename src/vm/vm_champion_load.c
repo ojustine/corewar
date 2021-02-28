@@ -5,11 +5,11 @@
 #include "util.h"
 #include "vm.h"
 
-int			vm_store_champ(t_champ *champ, t_champ *storage[])
+static int	vm_store_champion(t_champ *champ, t_champ **storage)
 {
 	static size_t	champ_counter;
 
-	log_debug(__func__, "Store champion");
+	log_trace(__func__, "Store champion");
 	if (champ_counter == MAX_PLAYERS)
 	{
 		log_error(__func__, "Number of champions exceeded maximum: %zu",
@@ -31,7 +31,28 @@ int			vm_store_champ(t_champ *champ, t_champ *storage[])
 	return (1);
 }
 
-void		vm_setup_champ_ids(t_champ **storage)
+static void	vm_setup_champions_code(void)
+{
+	int			i;
+	intptr_t	pc;
+
+	log_trace(__func__, "Set champions on arena");
+	i = 0;
+	pc = 0;
+	while (i < (int)g_vm.champ_size)
+	{
+		ft_memcpy(&g_vm.arena[pc], g_vm.champ[i]->code,
+			g_vm.champ[i]->header.prog_size);
+		log_debug(__func__, "Champion '%s' placed from %P to %P",
+			g_vm.champ[i]->header.prog_name, pc,
+			pc + g_vm.champ[i]->header.prog_size);
+		pc += MEM_SIZE / g_vm.champ_size;
+		i++;
+	}
+	g_vm.last_alive = (int)g_vm.champ_size - 1;
+}
+
+void		vm_setup_champions_ids(t_champ **storage)
 {
 	register int	i;
 	register int	j;
@@ -59,7 +80,7 @@ void		vm_setup_champ_ids(t_champ **storage)
 			g_vm.champ[i]->id, g_vm.champ[i]->header.prog_name);
 }
 
-t_champ		*vm_new_champ(const char *str_id, char *path)
+t_champ		*vm_new_champion(const char *str_id, char *path)
 {
 	t_champ		*champ;
 	long long	id;
@@ -102,14 +123,15 @@ int			vm_load_champions(int ac, char **av)
 			str_id = av[++i];
 		else if (ft_strend(av[i], COR_EXT))
 		{
-			champ = vm_new_champ(str_id, av[i]);
+			champ = vm_new_champion(str_id, av[i]);
 			if (!vm_read_champion(champ, av[i])
-			|| !vm_store_champ(champ, storage))
+			|| !vm_store_champion(champ, storage))
 				return (0);
 			str_id = NULL;
 		}
 	}
-	vm_setup_champ_ids(storage);
-	log_trace(__func__, "Successfully load %zu champions", g_vm.champ_size);
-	return (1);//todo copy exec code to memory
+	vm_setup_champions_ids(storage);
+	vm_setup_champions_code();
+	log_debug(__func__, "Successfully load %zu champions", g_vm.champ_size);
+	return (1);
 }

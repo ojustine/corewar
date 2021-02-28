@@ -25,7 +25,7 @@ void		print_winner(void)
 		g_vm.champ[g_vm.last_alive]->header.prog_name);
 }
 
-void		print_arena(const int byteness)
+void		print_arena(void)
 {
 	const t_byte	*arena = g_vm.arena;//todo strbuilder
 	register int	i;
@@ -37,13 +37,13 @@ void		print_arena(const int byteness)
 	{
 		ft_printf("%#04.4x : ", i);
 		j = 0;
-		while (j < byteness && j + i < MEM_SIZE)
+		while (j < g_vm.dump_byteness && j + i < MEM_SIZE)
 		{
 			ft_printf("%.2x ", arena[i + j]);
 			j++;
 		}
 		ft_printf("\n");
-		i += byteness;
+		i += g_vm.dump_byteness;
 	}
 }
 

@@ -6,7 +6,7 @@ void	vm_dump(void)
 {
 	char *user_input;
 
-	print_arena(64);
+	print_arena();
 	if (g_vm.config & VM_STEP_DUMP)
 	{
 		get_next_line(0, &user_input);

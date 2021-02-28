@@ -1,18 +1,21 @@
 #ifndef VM_H
 # define VM_H
 
+# include <stdint.h>
 # include "op.h"
 # include "op_struct.h"
+# include "vm_struct.h"
 # include "mem.h"
 # include "list.h"
 # include "logger.h"
-# include <stdint.h>
 
 # define	COR_EXT				".cor"
 # define	DUMP_BYTENESS		32
+# define	SHOW_MEM_MAX		16
 # define OP_CODE_LEN	1
 # define ARGS_CODE_LEN	1
-# define REG_LEN		1
+# define REG_SELF_SIZE	1
+# define IND_SELF_SIZE	2
 
 enum					e_vm_flags
 {
@@ -22,70 +25,39 @@ enum					e_vm_flags
 	VM_VERBOSE_DEATH = (1U << 3),
 	VM_VERBOSE_MOVE = (1U << 4),
 	VM_DUMP = (1U << 5),
-	VM_STEP = (1U << 6),
+	VM_STEP_DUMP = (1U << 6),
 	VM_AFF = (1U << 7),
 	VM_COLOR = (1U << 8)
 };
 
-typedef struct					s_header
-{
-	uint32_t					magic;
-	int8_t						prog_name[PROG_NAME_LENGTH];
-	uint32_t					nil1;
-	uint32_t					prog_size;
-	int8_t						comment[COMMENT_LENGTH];
-	uint32_t					nil2;
-}								t_header;
+t_vm					g_vm;
 
-typedef struct			s_champ
-{
-	t_header		header;
-	t_byte			code[CHAMP_MAX_SIZE + 1];
-	int				id;
-	int				last_live;
-}						t_champ;
-
-typedef struct			s_cursor
-{
-	int					id;
-	t_op				op;
-	int					carry;
-	t_byte				op_code;
-	int					last_live;
-	int					cycles_to_exec;
-	t_byte				args_types[3];
-	int					pc;
-	int					step;
-	t_byte				reg[REG_NUMBER + 1];
-	t_champ				*parent;
-}						t_cursor;
-
-typedef struct	s_vm
-{
-	unsigned	config;
-	int			dump_cycles;
-	int			dump_byteness;
-	t_byte		arena[MEM_SIZE];
-	t_byte		marks[MEM_SIZE];
-	t_champ		*champ[MAX_PLAYERS];
-	size_t		champ_size;
-	t_list		*cursors;
-	int			cycles;
-	int			cycles_after_check;
-	int			opt_num;
-	int			check_nbr;
-	int			process_index;
-	int			last_dead_champ;
-	int			last_alive;
-}				t_vm;
-
-int	vm_options(t_vm *vm, int ac, char **av);
-int	vm_load_champions(t_vm *vm, int ac, char **av);
+int	vm_options(int ac, char **av);
+int	vm_load_champions(int ac, char **av);
 int	vm_read_champion(t_champ *champ, const char *path);
-t_cursor	*vm_cursor_new(t_champ *parent, int pc);
-void		vm_cursor_set_initial(t_vm *vm);
-void	vm_run(t_vm *vm);
-void	vm_exec(t_vm *vm);
-void	vm_eval(t_vm *vm, t_cursor *cursor);
+t_cursor	*vm_cursor_new(intptr_t pc);
+void		vm_cursor_set_initial(void);
+void		vm_cursor_move(t_cursor *cursor);
 
+intptr_t	vm_trunc(intptr_t addr);
+int32_t	vm_load_mem(intptr_t addr, size_t size);
+void	vm_store_mem(int32_t val, intptr_t addr, size_t size);
+void	vm_mark_mem(t_byte mark, intptr_t addr, size_t size);
+char		*vm_show_mem(intptr_t addr, char *buf, size_t size);
+
+void	vm_run(void);
+void	vm_exec(void);
+void	vm_eval(t_cursor *cursor);
+void	vm_check(void);
+
+int32_t	get_arg_value(t_cursor *cursor, int index, int is_mod);
+
+void		print_intro(void);
+void		print_arena(int byteness);
+void		print_winner(void);
+
+void	verbose_move_pc(intptr_t pc, intptr_t step);
+void	verbose_cycle(void);
+void	verbose_cycles_to_die(void);
+void	verbose_cursor_death(t_cursor *cursor);
 #endif

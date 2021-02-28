@@ -7,23 +7,21 @@
 int	vm_verify_champ_header(t_champ *champ)
 {
 	log_trace(__func__, "Verify header fields");
-	to_sys_endian(BIG_ENDIAN, &champ->header.magic, 4);
-	to_sys_endian(BIG_ENDIAN, &champ->header.prog_size, 4);
 	if (champ->header.magic != COREWAR_EXEC_MAGIC)
 	{
-		log_error(__func__, "Champion '%s': invalid magic number: '%#X'",
+		log_error(__func__, "Champion '%s': invalid magic number: %#X",
 			champ->header.prog_name, champ->header.magic);
 		return (0);
 	}
-	if (champ->header.prog_size < 0 || champ->header.prog_size > CHAMP_MAX_SIZE)
+	if (champ->header.prog_size > CHAMP_MAX_SIZE)
 	{
-		log_error(__func__, "Champion '%s': invalid code size: '%d'",
+		log_error(__func__, "Champion '%s': invalid code size: %d",
 			champ->header.prog_name, champ->header.prog_size);
 		return (0);
 	}
 	if (champ->header.nil1 || champ->header.nil2)
 	{
-		log_error(__func__, "Champion '%s': no control nulls: 1: '%x', 2: '%x'",
+		log_error(__func__, "Champion '%s': no control nulls: 1: %x, 2: %x",
 			champ->header.prog_name, champ->header.nil1, champ->header.nil2);
 		return (0);
 	}
@@ -37,7 +35,7 @@ int	vm_read_champ_header(t_champ *champ, int fd)
 
 	log_trace(__func__, "Read champion's header");
 	reads = read(fd, &champ->header, hsize);
-	log_debug(__func__, "Reads header: '%d' bytes", reads);
+	log_debug(__func__, "Reads header: %d bytes", reads);
 	if (reads == -1)
 	{
 		log_error(__func__, "Read error: %m");
@@ -45,10 +43,12 @@ int	vm_read_champ_header(t_champ *champ, int fd)
 	}
 	if (reads != (int)hsize)
 	{
-		log_error(__func__, "Reads doesn't match header size: '%d' vs '%zu'",
+		log_error(__func__, "Reads doesn't match header size: %d vs %zu",
 			reads, hsize);
 		return (0);
 	}
+	to_sys_endian(FT_BIG_ENDIAN, &champ->header.magic, 4);
+	to_sys_endian(FT_BIG_ENDIAN, &champ->header.prog_size, 4);
 	return (vm_verify_champ_header(champ));
 }
 
@@ -59,7 +59,7 @@ int	vm_read_champ_code(t_champ *champ, int fd)
 
 	log_trace(__func__, "Read champion's exec code");
 	reads = read(fd, &champ->code, CHAMP_MAX_SIZE + 1);
-	log_debug(__func__, "Reads exec code: '%d' bytes", reads);
+	log_debug(__func__, "Reads exec code: %d bytes", reads);
 	if (reads == -1)
 	{
 		log_error(__func__, "Read error: %m");
@@ -67,12 +67,12 @@ int	vm_read_champ_code(t_champ *champ, int fd)
 	}
 	if (reads > CHAMP_MAX_SIZE)
 	{
-		log_error(__func__, "Reads exceed max code size: '%d'", CHAMP_MAX_SIZE);
+		log_error(__func__, "Reads exceed max code size: %d", CHAMP_MAX_SIZE);
 		return (0);
 	}
 	if (reads != (int)csize)
 	{
-		log_error(__func__, "Reads doesn't match code size: '%d' vs '%zu'",
+		log_error(__func__, "Reads doesn't match code size: %d vs %zu",
 			reads, csize);
 		return (0);
 	}

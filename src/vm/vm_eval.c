@@ -1,75 +1,127 @@
+#include "system.h"
 #include "vm.h"
 
-static void	set_arg_type(int8_t arg_type, int8_t index, t_cursor *cursor)
+static int	vm_validate_args(t_cursor *cursor)
 {
-	cursor->args_types[index - 1] = g_arg_code[INDEX(arg_type)];
-}
+	int	i;
 
-int32_t		calc_addr(int32_t addr)
-{
-	addr %= MEM_SIZE;
-	if (addr < 0)
-		addr += MEM_SIZE;
-	return (addr);
-}
-
-inline int8_t	get_byte(t_vm *vm, int32_t pc, int32_t step)
-{
-	return (vm->arena[calc_addr(pc + step)]);
-}
-
-void		parse_types_code(t_vm *vm, t_cursor *cursor, t_op *op)
-{
-	int8_t args_types_code;
-
-	if (op->args_types_code)
+	i = -1;
+	log_trace(__func__, "Cursor %d: validate args of operation '%s'",
+		cursor->id, cursor->op->name);
+	while (++i < cursor->op->args_num)
 	{
-		args_types_code = get_byte(vm, cursor->pc, 1);
-		if (op->args_num >= 1)
-			set_arg_type((int8_t)((args_types_code & 0xC0) >> 6), 1, cursor);
-		if (op->args_num >= 2)
-			set_arg_type((int8_t)((args_types_code & 0x30) >> 4), 2, cursor);
-		if (op->args_num >= 3)
-			set_arg_type((int8_t)((args_types_code & 0xC) >> 2), 3, cursor);
-	}
-	else
-		cursor->args_types[0] = op->args_types[0];
-}
-
-static void	vm_eval_opcode(t_vm *vm, t_cursor *cursor)
-{
-	log_trace(__func__, "Cursor: '%d', eval opcode", cursor->id);
-	cursor->op_code = vm->arena[cursor->pc];
-	if (cursor->op_code > 0x10)
-		cursor->op_code = 0;
-	cursor->cycles_to_exec = g_op[cursor->op_code].cycles;
-	log_debug(__func__, "Cursor: '%d', opcode: '%x', cycles to exec: '%d'",
-		cursor->id, cursor->op_code, cursor->cycles_to_exec);
-}
-
-void	vm_eval(t_vm *vm, t_cursor *cursor)
-{
-	log_trace(__func__, "Cursor: '%d', eval cycle", cursor->id);
-	if (cursor->cycles_to_exec == 0)
-		vm_eval_opcode(vm, cursor);
-	if (cursor->cycles_to_exec > 0)//todo log
-		cursor->cycles_to_exec--;
-	if (cursor->cycles_to_exec == 0)
-	{
-		t_op *op = NULL;
-		if (cursor->op_code)
+		if (!(cursor->args_types[i] & cursor->op->args_types[i]))
 		{
-			op = &g_op[cursor->op_code];
-			parse_types_code(vm, cursor, op);
-			if (is_arg_types_valid(cursor, op) && is_args_valid(cursor, vm, op))
-				op->func(vm, cursor);
-			else
-				cursor->step += calc_step(cursor, op);
-			if (vm->config & VM_VERBOSE_MOVE && cursor->step)
-				;//log_pc_movements(vm->arena, cursor);todo
+			log_trace(__func__, "Cursor %d: %dth arg: type %d is"
+				" incorrect for operation '%s'",
+				cursor->id, i + 1, cursor->args_types[i], cursor->op->name);
+			return (0);
 		}
+		if (cursor->args_types[i] == T_REG
+			&& (cursor->args[i] < 1 || cursor->args[i] > REG_NUMBER))
+		{
+			log_debug(__func__, "Cursor %d: %dth arg: register number %d"
+				" is out of bounds 1-%d",
+				cursor->id, i + 1, cursor->args[i], REG_NUMBER);
+			return (0);
+		}
+	}
+	return (1);
+}
+
+static void	vm_fetch_opcode(t_cursor *cursor)
+{
+	const t_byte	op_code = (t_byte)vm_load_mem(cursor->pc, OP_CODE_LEN);
+
+	log_trace(__func__, "Cursor %d: fetch operation code", cursor->id);
+	if (op_code > 0x10)
+		cursor->op = (t_op *)&g_op[0];
+	else
+		cursor->op = (t_op *)&g_op[op_code];
+	cursor->cycles_to_exec = cursor->op->cycles;
+	log_debug(__func__, "Cursor %d: fetched operation '%s' (%#x)",
+		cursor->id, cursor->op->name, cursor->op->code);
+	cursor->step += OP_CODE_LEN;
+}
+
+static void vm_fetch_args_types(t_cursor *cursor)
+{
+	static const t_byte	types[4] = {0, T_REG, T_DIR, T_IND};
+	static const char	*names[4] = {NULL, "REG", "DIR", "IND"};
+	int					args_types;
+	int					arg_type;
+	int					i;
+
+	log_trace(__func__, "Cursor %d: fetch args types of operation '%s'",
+		cursor->id, cursor->op->name);
+	if (cursor->op->args_types_code == 0)
+	{
+		cursor->args_types[0] = cursor->op->args_types[0];//todo out of bounds
+		log_trace(__func__, "Cursor %d: fetched arg type: %s",
+			cursor->id, names[cursor->args_types[0]]);
+		return ;
+	}
+	args_types = vm_load_mem(cursor->pc + cursor->step, ARGS_CODE_LEN);
+	i = -1;
+	while (++i < cursor->op->args_num)
+	{
+		arg_type = (args_types & (0xC0 >> (i * 2))) >> ((3 - i) * 2);
+		cursor->args_types[i] = types[arg_type];
+		log_trace(__func__, "Cursor %d: fetched %dth arg type: %s",
+			cursor->id, i + 1, names[arg_type]);
+	}
+	cursor->step += ARGS_CODE_LEN;
+}
+
+static void	vm_fetch_args(t_cursor *cursor)
+{
+	int		i;
+	int		arg;
+	size_t	arg_len;
+
+	log_trace(__func__, "Cursor %d: fetch args of operation '%s'",
+		cursor->id, cursor->op->name);
+	i = -1;
+	while (++i < (int)cursor->op->args_num)
+	{
+		if (cursor->args_types[i] == T_REG)
+			arg_len = REG_SELF_SIZE;
+		else if (cursor->args_types[i] == T_IND)
+			arg_len = IND_SELF_SIZE;
 		else
-			cursor->step = OP_CODE_LEN;
-		move_cursor(vm, cursor);
+			arg_len = cursor->op->dir_size;
+		arg = vm_load_mem(cursor->pc + cursor->step, arg_len);
+		cursor->args[i] = arg;
+		cursor->args_pc[i] = cursor->pc;
+		log_trace(__func__, "Cursor %d: fetched %dth arg: %d",
+			cursor->id, i + 1, cursor->args[i]);
+		cursor->step += arg_len;
+	}
+}
+
+void		vm_eval(t_cursor *cursor)
+{
+	log_trace(__func__, "Cursor %d: eval cycle %d", cursor->id, g_vm.cycles);
+	if (cursor->cycles_to_exec == 0)
+		vm_fetch_opcode(cursor);
+	if (cursor->cycles_to_exec > 0)
+	{
+		cursor->cycles_to_exec--;
+		log_trace(__func__, "Cursor %d: cycles to exec: %d",
+			cursor->id, cursor->cycles_to_exec);
+	}
+	if (cursor->cycles_to_exec == 0)
+	{
+		if (cursor->op->code)
+		{
+			vm_fetch_args_types(cursor);
+			vm_fetch_args(cursor);
+			if (vm_validate_args(cursor))
+				cursor->op->exec(cursor);
+			else
+				log_trace(__func__, "Cursor %d: skip operation with wrong args",
+					cursor->id);
+		}
+		vm_cursor_move(cursor);
 	}
 }

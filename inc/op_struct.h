@@ -13,28 +13,50 @@
 #ifndef OP_STRUCT_H
 # define OP_STRUCT_H
 # include "op.h"
+# include "mem.h"
 
-typedef struct	s_op
+struct				s_cursor;
+
+void				op_live(struct s_cursor *cursor);
+void				op_ld(struct s_cursor *cursor);
+//void				op_ld1(struct s_cursor *cursor);
+void				op_st(struct s_cursor *cursor);
+void				op_add(struct s_cursor *cursor);
+void				op_sub(struct s_cursor *cursor);
+void				op_and(struct s_cursor *cursor);
+void				op_or(struct s_cursor *cursor);
+void				op_xor(struct s_cursor *cursor);
+void				op_zjmp(struct s_cursor *cursor);
+void				op_ldi(struct s_cursor *cursor);
+void				op_sti(struct s_cursor *cursor);
+void				op_fork(struct s_cursor *cursor);
+void				op_lld(struct s_cursor *cursor);
+void				op_lldi(struct s_cursor *cursor);
+void				op_lfork(struct s_cursor *cursor);
+void				op_aff(struct s_cursor *cursor);
+
+typedef struct		s_op
 {
-	char		*name;
-	t_byte		code;
-	t_byte		args_num;
-	int			args_types_code;
-	t_byte		args_types[3];
-	t_byte		dir_size;
-	int			cycles;
+	char			*name;
+	t_byte			code;
+	t_byte			args_num;
+	int				args_types_code;
+	t_byte			args_types[3];
+	t_byte			dir_size;
+	int				cycles;
+	void			(*exec)(struct s_cursor *);
+}					t_op;
 
-}				t_op;
-
-static t_op		g_op[17] = {
+static const t_op	g_op[17] = {
 	{
-		.name = "",
+		.name = "not_op",
 		.code = 0x0,
 		.args_num = 0,
 		.args_types_code = 0,
 		.args_types = {0, 0, 0},
 		.dir_size = 0,
-		.cycles = 0
+		.cycles = 0,
+		.exec = NULL
 	},
 	{
 		.name = "live",
@@ -43,7 +65,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 0,
 		.args_types = {T_DIR, 0, 0},
 		.dir_size = 4,
-		.cycles = 10
+		.cycles = 10,
+		.exec = op_live
 	},
 	{
 		.name = "ld",
@@ -52,7 +75,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_DIR | T_IND, T_REG, 0},
 		.dir_size = 4,
-		.cycles = 5
+		.cycles = 5,
+		.exec = op_ld
 	},
 	{
 		.name = "st",
@@ -61,7 +85,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG, T_REG | T_IND, 0},
 		.dir_size = 4,
-		.cycles = 5
+		.cycles = 5,
+		.exec = op_st
 	},
 	{
 		.name = "add",
@@ -70,7 +95,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG, T_REG, T_REG},
 		.dir_size = 4,
-		.cycles = 10
+		.cycles = 10,
+		.exec = op_add
 	},
 	{
 		.name = "sub",
@@ -79,7 +105,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG, T_REG, T_REG},
 		.dir_size = 4,
-		.cycles = 10
+		.cycles = 10,
+		.exec = op_sub
 	},
 	{
 		.name = "and",
@@ -88,7 +115,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR | T_IND, T_REG},
 		.dir_size = 4,
-		.cycles = 6
+		.cycles = 6,
+		.exec = op_and
 	},
 	{
 		.name = "or",
@@ -97,7 +125,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR | T_IND, T_REG},
 		.dir_size = 4,
-		.cycles = 6
+		.cycles = 6,
+		.exec = op_or
 	},
 	{
 		.name = "xor",
@@ -106,7 +135,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR | T_IND, T_REG},
 		.dir_size = 4,
-		.cycles = 6
+		.cycles = 6,
+		.exec = op_xor
 	},
 	{
 		.name = "zjmp",
@@ -115,7 +145,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 0,
 		.args_types = {T_DIR, 0, 0},
 		.dir_size = 2,
-		.cycles = 20
+		.cycles = 20,
+		.exec = op_zjmp
 	},
 	{
 		.name = "ldi",
@@ -124,7 +155,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR, T_REG},
 		.dir_size = 2,
-		.cycles = 25
+		.cycles = 25,
+		.exec = op_ldi
 	},
 	{
 		.name = "sti",
@@ -133,7 +165,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG, T_REG | T_DIR | T_IND, T_REG | T_DIR},
 		.dir_size = 2,
-		.cycles = 25
+		.cycles = 25,
+		.exec = op_sti
 	},
 	{
 		.name = "fork",
@@ -142,7 +175,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 0,
 		.args_types = {T_DIR, 0, 0},
 		.dir_size = 2,
-		.cycles = 800
+		.cycles = 800,
+		.exec = op_fork
 	},
 	{
 		.name = "lld",
@@ -151,7 +185,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_DIR | T_IND, T_REG, 0},
 		.dir_size = 4,
-		.cycles = 10
+		.cycles = 10,
+		.exec = op_lld
 	},
 	{
 		.name = "lldi",
@@ -160,7 +195,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG | T_DIR | T_IND, T_REG | T_DIR, T_REG},
 		.dir_size = 2,
-		.cycles = 50
+		.cycles = 50,
+		.exec = op_lldi
 	},
 	{
 		.name = "lfork",
@@ -169,7 +205,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 0,
 		.args_types = {T_DIR, 0, 0},
 		.dir_size = 2,
-		.cycles = 1000
+		.cycles = 1000,
+		.exec = op_lfork
 	},
 	{
 		.name = "aff",
@@ -178,7 +215,8 @@ static t_op		g_op[17] = {
 		.args_types_code = 1,
 		.args_types = {T_REG, 0, 0},
 		.dir_size = 4,
-		.cycles = 2
+		.cycles = 2,
+		.exec = op_aff
 	}
 };
 

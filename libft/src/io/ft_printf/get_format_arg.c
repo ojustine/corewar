@@ -104,7 +104,8 @@ static inline void	get_type(t_ptf_info *info)
 	else if (*info->fmt == 'o' || *info->fmt == 'O')
 		get_unsigned_arg(info, 8);
 	else if ((*info->fmt == 'x' || *info->fmt == 'X')
-		|| (*info->fmt == 'p' && (info->flags |= FLAG_PTR)))
+		|| ((*info->fmt == 'p' || *info->fmt == 'P')
+		&& (info->flags |= FLAG_PTR)))
 		get_unsigned_arg(info, 16);
 	else if (*info->fmt == 'b' || *info->fmt == 'B')
 		get_unsigned_arg(info, 2);

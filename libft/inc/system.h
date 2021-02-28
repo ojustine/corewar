@@ -25,6 +25,7 @@ int			ft_open_path(const char *path, int flag, mode_t mode);
 
 enum		e_endian endian();
 void		*to_sys_endian(enum e_endian from, void *pv, size_t size);
+void		*to_endian(enum e_endian to, void *pv, size_t size);
 void		byte_swap(void *pv, size_t size);
 uint16_t	byte_swap_u16(uint16_t val);
 uint32_t	byte_swap_u32(uint32_t val);

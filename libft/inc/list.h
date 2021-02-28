@@ -32,6 +32,7 @@ typedef struct			s_list
 t_list					*list_new(void);
 t_list_node				*list_new_node(void *data);
 void					list_clear(t_list **list, void (*f)(void *));
+void					*list_pop(t_list *list, size_t index);
 void					*list_pop_back(t_list *list);
 void					*list_pop_front(t_list *list);
 void					list_push_back(t_list *list, void *item);

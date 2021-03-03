@@ -53,7 +53,7 @@ void		vm_store_mem(int32_t val, intptr_t addr, size_t size)
 	size_t	head_size;
 
 	log_trace(__func__, "Store %zu bytes (%#b) at address %P",
-			  size, val, addr);
+		size, val, addr);
 	addr = vm_trunc(addr);
 	to_endian(FT_BIG_ENDIAN, &val, REG_SIZE);
 	if (addr + size <= MEM_SIZE)
@@ -69,26 +69,27 @@ void		vm_store_mem(int32_t val, intptr_t addr, size_t size)
 
 int32_t		vm_load_mem(intptr_t addr, size_t size)
 {
-	register size_t	i;
-	int32_t			res;
+	size_t	tail_size;
+	size_t	head_size;
+	int32_t	res;
 
 	addr = vm_trunc(addr);
-	i = 0;
 	res = 0;
 	if (addr + size <= MEM_SIZE)
-		if (size < 3)
-			res = size == 1 ? g_vm.arena[addr] : *((int16_t*)&g_vm.arena[addr]);
-		else
-			res = *((int32_t*)&g_vm.arena[addr]);
+		ft_memcpy(&res, &g_vm.arena[addr], size);
 	else
-		while (++i <= size)
-		{
-			if (addr == MEM_SIZE)
-				addr = 0;
-			res += (int32_t)g_vm.arena[addr] << ((size - i) * 8);
-			addr++;
-		}
-	to_sys_endian(FT_BIG_ENDIAN, &res, size);
+	{
+		tail_size = MEM_SIZE - addr;
+		head_size = addr + size - MEM_SIZE;
+		ft_memcpy(&res, &g_vm.arena[addr], tail_size);
+		ft_memcpy((t_byte *)&res + tail_size, &g_vm.arena[0], head_size);
+	}
+	if (size > 1)
+	{
+		to_sys_endian(FT_BIG_ENDIAN, &res, size);
+		if (size == 2)
+			res = *(int16_t *)&res;
+	}
 	log_trace(__func__, "Load %zu bytes (%#b) from address %P",
 		size, res, addr);
 	return (res);

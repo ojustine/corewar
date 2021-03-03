@@ -1,10 +1,10 @@
 #include "mem.h"
 #include "system.h"
 
-enum e_endian endian()
+enum e_endian	endian()
 {
-	int i;
-	char *p;
+	int		i;
+	char	*p;
 
 	i = 1;
 	p = (char *)&i;
@@ -14,7 +14,7 @@ enum e_endian endian()
 		return (FT_BIG_ENDIAN);
 }
 
-void	*to_endian(enum e_endian to, void *pv, size_t size)
+void			*to_endian(enum e_endian to, void *pv, size_t size)
 {
 	uint16_t	*p16;
 	uint32_t	*p32;
@@ -35,14 +35,14 @@ void	*to_endian(enum e_endian to, void *pv, size_t size)
 	else if (size == 8)
 	{
 		p64 = pv;
-		*p64 = byte_swap_s32(*p64);
+		*p64 = byte_swap_s64(*p64);
 	}
 	else
 		byte_swap(pv, size);
 	return (pv);
 }
 
-void	*to_sys_endian(enum e_endian from, void *pv, size_t size)
+void			*to_sys_endian(enum e_endian from, void *pv, size_t size)
 {
 	uint16_t	*p16;
 	uint32_t	*p32;
@@ -63,7 +63,7 @@ void	*to_sys_endian(enum e_endian from, void *pv, size_t size)
 	else if (size == 8)
 	{
 		p64 = pv;
-		*p64 = byte_swap_s32(*p64);
+		*p64 = byte_swap_s64(*p64);
 	}
 	else
 		byte_swap(pv, size);

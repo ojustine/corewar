@@ -26,8 +26,8 @@ void				op_st(t_cursor *cursor)
 		addr = cursor->args[1] % IDX_MOD;
 		vm_store_mem(value, addr + cursor->pc, REG_SIZE);
 		vm_mark_mem(cursor->mark, addr + cursor->pc, REG_SIZE);
-		log_debug(__func__, "Cursor %d: exec 'st': r%d (%d) -> %P",
-			cursor->id, reg_0_id, value, vm_trunc(addr + cursor->pc));
+		log_debug(__func__, "Cursor %d: exec 'st': r%d (%d) -> %d (%P)",
+			cursor->id, reg_0_id, value, addr, vm_trunc(addr + cursor->pc));
 	}
 	if (g_vm.config & VM_VERBOSE_OP)
 		op_verbose(cursor, reg_0_id, addr);

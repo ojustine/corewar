@@ -27,7 +27,7 @@ void		print_winner(void)
 
 void		print_arena(void)
 {
-	const t_byte	*arena = g_vm.arena;//todo strbuilder
+	const t_byte	*arena = g_vm.arena;//todo strbuilder, color
 	register int	i;
 	register int	j;
 

@@ -45,9 +45,7 @@ void	vm_store_mem(int32_t val, intptr_t addr, size_t size);
 void	vm_mark_mem(t_byte mark, intptr_t addr, size_t size);
 char		*vm_show_mem(intptr_t addr, char *buf, size_t size);
 
-void	vm_run(void);
-void	vm_exec(void);
-void	vm_eval(t_cursor *cursor);
+void	vm_exec(t_cursor *cursor);
 void	vm_check(void);
 
 int32_t	get_arg_value(t_cursor *cursor, int index, int is_mod);

@@ -28,10 +28,16 @@ void		vm_cursor_move(t_cursor *cursor)
 	cursor->step = 0;
 	if (cursor->pc >= MEM_SIZE)
 		cursor->pc %= MEM_SIZE;
-	log_trace(__func__, "Cursor '%d': move PC by '%zu' bytes (%P >>> %P) %s",
-		cursor->id, step, old_pc, cursor->pc, vm_show_mem(old_pc, buf, step));
-	if (cursor->op->code && g_vm.config & VM_VERBOSE_MOVE)
-		verbose_move_pc(old_pc, step);
+	if (cursor->op->code)
+	{
+		log_debug(__func__, "Cursor %d: move PC by %zu bytes (%P >>> %P) %s",
+			cursor->id, step, old_pc, cursor->pc, vm_show_mem(old_pc, buf, step));
+		if (g_vm.config & VM_VERBOSE_MOVE)
+			verbose_move_pc(old_pc, step);
+
+	}
+	else
+		log_trace(__func__, "Cursor %d: move PC by 1 byte", cursor->id);
 }
 
 void		vm_cursor_set_initial(void)
@@ -54,5 +60,5 @@ void		vm_cursor_set_initial(void)
 		pc += MEM_SIZE / (int)g_vm.champ_size;
 		i++;
 	}
-	log_debug(__func__, "'%d' cursors set", i);
+	log_debug(__func__, "%d cursors set", i);
 }

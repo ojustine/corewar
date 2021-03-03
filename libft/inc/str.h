@@ -36,5 +36,7 @@ void	ft_strrev(register char *begin, register char *end);
 size_t	ft_wstrlen(const wint_t *s);
 int		ft_strstart(const char *str, const char *prefix);
 int		ft_strend(const char *str, const char *suffix);
+char	*ft_strtrim(const char *s);
+char	*ft_strstrim(const char *s, const char *symbols);
 
 #endif

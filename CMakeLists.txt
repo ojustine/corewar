@@ -122,8 +122,16 @@ add_library(libft STATIC
 		libft/src/io/ft_printf/string_processing.c
 
         libft/src/util/ft_log_error.c
-		libft/inc/ft_regex.h libft/src/regex/o_regex.c libft/src/regex/o_regex_compile.c
-		)
+
+		libft/inc/predicates.h
+		libft/src/predicates/ft_isalnum.c
+		libft/src/predicates/ft_isalpha.c
+		libft/src/predicates/ft_isascii.c
+		libft/src/predicates/ft_isdigit.c
+		libft/src/predicates/ft_isprint.c
+		libft/src/predicates/ft_isspace.c
+
+		libft/src/string/ft_strtrim.c)
 
 set_target_properties(libft PROPERTIES PUBLIC_HEADER
         libft/inc/array_list.h

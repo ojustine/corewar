@@ -46,3 +46,32 @@ void		print_arena(void)
 		i += g_vm.dump_byteness;
 	}
 }
+
+void		print_usage(void)
+{
+	ft_printf("Usage: ./corewar [-a] [(-dump|-d) <num> [<num>]] [(-step|-s) "
+		"<num> [<num>]] [(-verbose|-v) <num>] [(-log|-l) [color prefix] "
+		"[(-file|-f) <path>] <LOG_LEVEL>] [-n <num>] <champion.cor> <...>\n");
+	ft_printf("    -aff|-a            : Print output from \"aff\" "
+		"(Default is off)\n");
+	ft_printf("    -dump|-d <n> [<b>] : Dump memory after <num> cycles (<b> "
+		"octets per line, default is %d) and exit\n", DUMP_BYTENESS);
+	ft_printf("    -step|-s <n> [<b>] : Run <n> cycles, dump memory (<b> octets"
+		" per line, default is %d), pause and repeat\n                         "
+		"If input is a number, then next dump occurs after the entered number "
+		"of cycles\n", DUMP_BYTENESS);
+	ft_printf("    -n <n>             : Set <num> of the next player\n");
+	ft_printf("    -verbose|-v <n>    : Verbose output levels:\n"
+		"                           1  : Show lives\n"
+		"                           2  : Show cycles\n"
+		"                           4  : Show operations\n"
+		"                           8  : Show deaths\n"
+		"                           16 : Show PC movements\n");
+	ft_printf("    -log|-l [...] <L>  : Logger levels and features:\n");
+	ft_printf("                           <L>           : TRACE DEBUG INFO WARN"
+		" ERROR\n");
+	ft_printf("                           color         : colored output\n"
+		"                           prefix        : information prefix before "
+		"each message\n                           file [<path>] : information "
+		"prefix before each message\n");
+}

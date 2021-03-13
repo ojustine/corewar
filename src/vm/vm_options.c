@@ -74,21 +74,10 @@ static int	option_other(char *av)
 		g_vm.config |= VM_AFF;
 		log_info(__func__, "Printing output from 'aff' is enabled");
 	}
-	else if (ft_strequ(av, "-c") || ft_strequ(av, "-color"))
-	{
-		log_trace(__func__, "Resolve option 'color'");
-		g_vm.config |= VM_COLOR;
-		log_info(__func__, "Colored output is enabled");
-	}
 	else if (ft_strend(av, COR_EXT) && ft_strlen(av) > sizeof(COR_EXT))
 	{
 		log_trace(__func__, "Resolve champion: '%s'", av);
 		g_vm.champ_size++;
-	}
-	else
-	{
-		log_error(__func__, "Unknown option: '%s'", av);
-		return (0);
 	}
 	return (1);
 }
@@ -98,8 +87,8 @@ int			vm_options(int ac, char **av)
 	int	ok;
 	int	i;
 
-	ok = 1;
 	i = 0;
+	vm_options_logger(ac, av);
 	while (++i < ac)
 	{
 		if (ft_strequ(av[i], "-d") || ft_strequ(av[i], "-s")
@@ -109,12 +98,13 @@ int			vm_options(int ac, char **av)
 			ok = option_verbose(&i, ac, av);
 		else if (ft_strequ(av[i], "-n") || ft_strequ(av[i], "-number"))
 			ok = option_n(&i, ac, av);
-		else if (ft_strequ(av[i], "-l") || ft_strequ(av[i], "-log"))
-			;//vm_options_l(&i, ac, av);
 		else
 			ok = option_other(av[i]);
 		if (!ok)
-			return (0);//todo usage?
+		{
+			print_usage();
+			return (0);
+		}
 	}
 	log_debug(__func__, "The number of champions is '%zu'", g_vm.champ_size);
 	return (1);

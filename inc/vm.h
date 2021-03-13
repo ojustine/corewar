@@ -33,6 +33,7 @@ enum					e_vm_flags
 t_vm					g_vm;
 
 int	vm_options(int ac, char **av);
+int			vm_options_logger(int ac, char **av);
 int	vm_load_champions(int ac, char **av);
 int	vm_read_champion(t_champ *champ, const char *path);
 t_cursor	*vm_cursor_new(intptr_t pc);
@@ -53,6 +54,7 @@ int32_t	get_arg_value(t_cursor *cursor, int index, int is_mod);
 void		print_intro(void);
 void		print_arena(void);
 void		print_winner(void);
+void		print_usage(void);
 
 void	verbose_move_pc(intptr_t pc, intptr_t step);
 void	verbose_cycle(void);

@@ -18,7 +18,6 @@ typedef struct			s_champ
 	int					id;
 	t_header			header;
 	t_byte				code[CHAMP_MAX_SIZE + 1];
-	int					last_live;
 }						t_champ;
 
 typedef struct			s_cursor
@@ -34,8 +33,7 @@ typedef struct			s_cursor
 	int					carry;
 	int					live_cycle;
 	int					cycles_to_exec;
-	int					live_nbr;//todo is ness?
-	t_champ				*parent;
+	int					live_nbr;
 	t_byte				mark;
 }						t_cursor;
 
@@ -54,7 +52,6 @@ typedef struct			s_vm
 	int					cycles_to_die;
 	int					lives_nbr;
 	int					checks_nbr;
-	int					last_dead_champ;
 	int					last_alive;
 }						t_vm;
 

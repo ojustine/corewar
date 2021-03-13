@@ -2,7 +2,7 @@
 #include "str.h"
 #include "vm.h"
 
-static int	vm_option_dump(int *i, int ac, char **av)
+static int	option_dump(int *i, int ac, char **av)
 {
 	g_vm.config |= VM_DUMP;
 	if (av[*i][1] == 's')
@@ -31,7 +31,7 @@ static int	vm_option_dump(int *i, int ac, char **av)
 	return (0);
 }
 
-static int	vm_option_verbose(int *i, int ac, char **av)
+static int	option_verbose(int *i, int ac, char **av)
 {
 	unsigned	verbose;
 
@@ -48,7 +48,7 @@ static int	vm_option_verbose(int *i, int ac, char **av)
 	return (0);
 }
 
-static int	vm_option_n(int *i, int ac, char **av)
+static int	option_n(int *i, int ac, char **av)
 {
 	log_trace(__func__, "Resolve option 'number'");
 	if (*i + 2 < ac
@@ -66,7 +66,7 @@ static int	vm_option_n(int *i, int ac, char **av)
 	return (0);
 }
 
-static int	vm_option_other(char *av)
+static int	option_other(char *av)
 {
 	if (ft_strequ(av, "-a") || ft_strequ(av, "-aff"))
 	{
@@ -104,19 +104,17 @@ int			vm_options(int ac, char **av)
 	{
 		if (ft_strequ(av[i], "-d") || ft_strequ(av[i], "-s")
 			|| ft_strequ(av[i], "-dump") || ft_strequ(av[i], "-step"))
-			ok = vm_option_dump(&i, ac, av);
+			ok = option_dump(&i, ac, av);
 		else if (ft_strequ(av[i], "-v") || ft_strequ(av[i], "-verbose"))
-			ok = vm_option_verbose(&i, ac, av);
+			ok = option_verbose(&i, ac, av);
 		else if (ft_strequ(av[i], "-n") || ft_strequ(av[i], "-number"))
-			ok = vm_option_n(&i, ac, av);
+			ok = option_n(&i, ac, av);
 		else if (ft_strequ(av[i], "-l") || ft_strequ(av[i], "-log"))
 			;//vm_options_l(&i, ac, av);
 		else
-			ok = vm_option_other(av[i]);
+			ok = option_other(av[i]);
 		if (!ok)
-		{
 			return (0);//todo usage?
-		}
 	}
 	log_debug(__func__, "The number of champions is '%zu'", g_vm.champ_size);
 	return (1);

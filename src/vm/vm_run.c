@@ -1,4 +1,5 @@
-#include <system.h>
+#include <ft_printf.h>
+#include <stdio.h>
 #include "io_.h"
 #include "str.h"
 #include "conv.h"
@@ -60,8 +61,12 @@ static void	vm_run(void)
 
 int			main(int ac, char **av)
 {
+	char b[100];
+	int t = ft_snprintf(b, 0, "123456\n");
+	printf("%d '%s'", t, (char*)b);
+	exit(0);
 	ft_bzero(&g_vm, sizeof(t_vm));
-	logger_set_app_log_lvl(L_STDOUT, DEBUG);
+	logger_set_app_log_lvl(L_STDOUT, TRACE);
 	logger_switch_flags(L_USE_COLORS, L_ENABLE);
 	if (!vm_options(ac, av))
 		ft_exit(EXIT_FAILURE, "Resolving arguments failed");
@@ -69,5 +74,6 @@ int			main(int ac, char **av)
 		ft_exit(EXIT_FAILURE, "Loading champions failed");
 	g_vm.cycles_to_die = CYCLE_TO_DIE;
 	vm_run();
+	log_info(__func__, "Stop Corewar Virtual Machine");
 	//ft_exit(0, NULL);
 }

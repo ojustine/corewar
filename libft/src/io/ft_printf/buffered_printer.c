@@ -16,14 +16,17 @@
 
 void	flush_in_string(t_ptf_info *info)
 {
-	ft_memcpy(info->out + info->out_index, info->buff, info->buff_index);
-	info->out_index += info->buff_index;
-	*(info->out + info->out_index) = 0;
+	info->required_size += info->buff_index;
+	if (info->printed + info->buff_index >= info->out_size)
+		info->buff_index = info->out_size - 1;
+	ft_memcpy(info->out + info->printed, info->buff, info->buff_index);
+	info->printed += info->buff_index;
+	*(info->out + info->printed) = 0;
 }
 
 void	flush_in_file_stream(t_ptf_info *info)
 {
-	write(info->fd, info->buff, info->buff_index);
+	info->printed += write(info->fd, info->buff, info->buff_index);
 }
 
 void	do_print(t_ptf_info *info, char *data, size_t size)
@@ -42,7 +45,6 @@ void	do_print(t_ptf_info *info, char *data, size_t size)
 		size -= remaining_space;
 		data_index += remaining_space;
 		info->buff_index += remaining_space;
-		info->printed += remaining_space;
 		info->flush(info);
 		info->buff_index = 0;
 	}
@@ -51,5 +53,4 @@ void	do_print(t_ptf_info *info, char *data, size_t size)
 	else
 		ft_memcpy(&(info->buff[info->buff_index]), &(data[data_index]), size);
 	info->buff_index += size;
-	info->printed += size;
 }

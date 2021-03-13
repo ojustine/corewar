@@ -11,7 +11,7 @@ t_cursor	*vm_cursor_new(intptr_t pc)
 	ft_assert(cursor != NULL, __func__, E_ALLOC);
 	cursor->id = ++cursor_id;
 	cursor->pc = pc;
-	log_debug(__func__, "Cursor %d: created with pc: %P", cursor->id,
+	log_debug(__func__, "Cursor %d: created with pc %P", cursor->id,
 		cursor->pc);
 	return (cursor);
 }
@@ -24,14 +24,13 @@ void		vm_cursor_move(t_cursor *cursor)
 
 	if (step == 0)
 		return ;
-	cursor->pc += step;
 	cursor->step = 0;
-	if (cursor->pc >= MEM_SIZE)
-		cursor->pc %= MEM_SIZE;
+	cursor->pc = vm_trunc(old_pc + step);
 	if (cursor->op->code)
 	{
 		log_debug(__func__, "Cursor %d: move PC by %zu bytes (%P >>> %P) %s",
-			cursor->id, step, old_pc, cursor->pc, vm_show_mem(old_pc, buf, step));
+			cursor->id, step, old_pc, cursor->pc,
+			vm_show_mem(old_pc, buf, step));
 		if (g_vm.config & VM_VERBOSE_MOVE)
 			verbose_move_pc(old_pc, step);
 
@@ -46,7 +45,7 @@ void		vm_cursor_set_initial(void)
 	int			i;
 	intptr_t	pc;
 
-	log_trace(__func__, "Set initial cursors");
+	log_trace(__func__, "Setup initial cursors");
 	i = 0;
 	pc = 0;
 	g_vm.cursors = list_new();
@@ -55,7 +54,6 @@ void		vm_cursor_set_initial(void)
 	{
 		cursor = vm_cursor_new(pc);
 		cursor->reg[1] = -g_vm.champ[i]->id;
-		cursor->parent = g_vm.champ[i];
 		list_push_front(g_vm.cursors, cursor);
 		pc += MEM_SIZE / (int)g_vm.champ_size;
 		i++;

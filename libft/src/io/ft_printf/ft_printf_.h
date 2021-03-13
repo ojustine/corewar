@@ -69,7 +69,6 @@ enum					e_fxd_assets
 	FP_LD_POINT = (LDBL_MAX_10_EXP / FP_R_LEN) + 2,
 	FP_LD_LEN = (FP_LD_POINT + FP_LD_MAX_PREC / FP_R_LEN) + 3,
 	FP_LD_CHAR_LEN = DBL_MAX_10_EXP + FP_LD_MAX_PREC
-//	FP_LD_64BIT = 1ULL << 63
 };
 
 #define FP_LD_64BIT (1ULL << 63)
@@ -136,7 +135,8 @@ typedef struct			s_ptf_info
 	char				buff[BUFF_SIZE + 1];
 	size_t				buff_index;
 	size_t				printed;
-	size_t				out_index;
+	size_t				required_size;
+	size_t				out_size;
 	char				*out;
 	va_list				ap;
 	const char			*fmt;

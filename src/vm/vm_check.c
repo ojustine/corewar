@@ -1,4 +1,3 @@
-#include "ft_printf.h"
 #include "vm.h"
 
 static inline int	is_alive(t_cursor *cursor)

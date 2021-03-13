@@ -1,7 +1,7 @@
 #include "system.h"
 #include "vm.h"
 
-static int	vm_validate_args(t_cursor *cursor)
+static int	validate_args(t_cursor *cursor)
 {
 	int	i;
 
@@ -21,7 +21,7 @@ static int	vm_validate_args(t_cursor *cursor)
 			&& (cursor->args[i] < 1 || cursor->args[i] > REG_NUMBER))
 		{
 			log_debug(__func__, "Cursor %d: %dth arg: register number %d"
-				" is out of bounds 1-%d",
+				" is out of bounds [1 - %d]",
 				cursor->id, i + 1, cursor->args[i], REG_NUMBER);
 			return (0);
 		}
@@ -29,7 +29,7 @@ static int	vm_validate_args(t_cursor *cursor)
 	return (1);
 }
 
-static void	vm_fetch_opcode(t_cursor *cursor)
+static void	fetch_opcode(t_cursor *cursor)
 {
 	t_byte	op_code;
 
@@ -45,10 +45,10 @@ static void	vm_fetch_opcode(t_cursor *cursor)
 	cursor->step += OP_CODE_LEN;
 }
 
-static void vm_fetch_args_types(t_cursor *cursor)
+static void fetch_args_types(t_cursor *cursor)
 {
 	static const t_byte	types[4] = {0, T_REG, T_DIR, T_IND};
-	static const char	*names[4] = {NULL, "REG", "DIR", "IND"};
+	static const char	*names[4] = {"NOT_ARG", "REG", "DIR", "IND"};
 	int					args_types;
 	int					arg_type;
 	int					i;
@@ -74,10 +74,9 @@ static void vm_fetch_args_types(t_cursor *cursor)
 	cursor->step += ARGS_CODE_LEN;
 }
 
-static void	vm_fetch_args(t_cursor *cursor)
+static void	fetch_args(t_cursor *cursor)
 {
 	int		i;
-	int		arg;
 	size_t	arg_len;
 
 	log_trace(__func__, "Cursor %d: fetch args of operation '%s'",
@@ -89,10 +88,11 @@ static void	vm_fetch_args(t_cursor *cursor)
 			arg_len = REG_SELF_SIZE;
 		else if (cursor->args_types[i] == T_IND)
 			arg_len = IND_SELF_SIZE;
-		else
+		else if (cursor->args_types[i] == T_DIR)
 			arg_len = cursor->op->dir_size;
-		arg = vm_load_mem(cursor->pc + cursor->step, arg_len);
-		cursor->args[i] = arg;
+		else
+			break ;
+		cursor->args[i] = vm_load_mem(cursor->pc + cursor->step, arg_len);
 		cursor->args_pc[i] = cursor->pc;
 		log_trace(__func__, "Cursor %d: fetched %dth arg: %d",
 			cursor->id, i + 1, cursor->args[i]);
@@ -103,7 +103,7 @@ static void	vm_fetch_args(t_cursor *cursor)
 void		vm_exec(t_cursor *cursor)
 {
 	if (cursor->cycles_to_exec == 0)
-		vm_fetch_opcode(cursor);
+		fetch_opcode(cursor);
 	if (cursor->cycles_to_exec > 0)
 	{
 		cursor->cycles_to_exec--;
@@ -114,9 +114,9 @@ void		vm_exec(t_cursor *cursor)
 	{
 		if (cursor->op->code)
 		{
-			vm_fetch_args_types(cursor);
-			vm_fetch_args(cursor);
-			if (vm_validate_args(cursor))
+			fetch_args_types(cursor);
+			fetch_args(cursor);
+			if (validate_args(cursor))
 				cursor->op->exec(cursor);
 			else
 				log_trace(__func__, "Cursor %d: skip operation with wrong args",

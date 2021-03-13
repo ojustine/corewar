@@ -7,6 +7,7 @@ char		*vm_show_mem(intptr_t addr, char *buf, size_t size)
 	register char	*ptr;
 	register size_t	i;
 
+	addr = vm_trunc(addr);
 	i = 0;
 	ptr = buf;
 	while (i < size && i < SHOW_MEM_MAX)
@@ -22,7 +23,8 @@ char		*vm_show_mem(intptr_t addr, char *buf, size_t size)
 
 intptr_t	vm_trunc(intptr_t addr)
 {
-	addr %= MEM_SIZE;
+	if (addr >= MEM_SIZE || addr <= -MEM_SIZE)
+		addr %= MEM_SIZE;
 	if (addr < 0)
 		addr += MEM_SIZE;
 	return (addr);
@@ -34,8 +36,6 @@ void		vm_mark_mem(t_byte mark, intptr_t addr, size_t size)
 	size_t	head_size;
 
 	addr = vm_trunc(addr);
-	log_trace(__func__, "Mark %zu bytes addressed %P with %#08b",
-			  size, addr, mark);
 	if (addr + size <= MEM_SIZE)
 		ft_memset(&g_vm.marks[addr], mark, size);
 	else
@@ -52,9 +52,9 @@ void		vm_store_mem(int32_t val, intptr_t addr, size_t size)
 	size_t	tail_size;
 	size_t	head_size;
 
+	addr = vm_trunc(addr);
 	log_trace(__func__, "Store %zu bytes (%#b) at address %P",
 		size, val, addr);
-	addr = vm_trunc(addr);
 	to_endian(FT_BIG_ENDIAN, &val, REG_SIZE);
 	if (addr + size <= MEM_SIZE)
 		ft_memcpy(&g_vm.arena[addr], &val, size);

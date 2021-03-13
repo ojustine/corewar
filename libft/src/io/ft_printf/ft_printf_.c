@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdarg.h>
+#include <stdio.h>
 #include "mem.h"
 #include "ft_printf_.h"
 
@@ -32,7 +33,9 @@ static inline int	entry(register t_ptf_info *info)
 		info->fmt++;
 	}
 	info->flush(info);
-	return (info->printed);
+	return ((int)(info->printed > info->required_size
+			? info->printed
+			: info->required_size));
 }
 
 int					ft_vdprintf(int fd, const char *format, va_list ap)
@@ -60,9 +63,9 @@ int					ft_vsprintf(char *str, const char *format, va_list ap)
 	if (str == NULL)
 		return (-1);
 	ft_bzero(&info, sizeof(t_ptf_info));
-	info.fd = -1;
 	info.fmt = format;
 	info.out = str;
+	info.out_size = SIZE_MAX;
 	info.flush = &flush_in_string;
 	va_copy(info.ap, ap);
 	ret = entry(&info);
@@ -70,13 +73,23 @@ int					ft_vsprintf(char *str, const char *format, va_list ap)
 	return (ret);
 }
 
-int					ft_sprintf(char *str, const char *format, ...)
+int					ft_vsnprintf(char *str, size_t maxlen, const char *format,
+					va_list ap)
 {
-	va_list	ap;
-	int		ret;
+	t_ptf_info	info;
+	int			ret;
 
-	va_start(ap, format);
-	ret = ft_vsprintf(str, format, ap);
-	va_end(ap);
+	if (str == NULL)
+		return (-1);
+//	if (maxlen == 0)
+//		return (ft_vsprintf(str, format, ap));
+	ft_bzero(&info, sizeof(t_ptf_info));
+	info.fmt = format;
+	info.out = str;
+	info.out_size = maxlen;
+	info.flush = &flush_in_string;
+	va_copy(info.ap, ap);
+	ret = entry(&info);
+	va_end(info.ap);
 	return (ret);
 }

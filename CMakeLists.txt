@@ -131,7 +131,7 @@ add_library(libft STATIC
 		libft/src/predicates/ft_isprint.c
 		libft/src/predicates/ft_isspace.c
 
-		libft/src/string/ft_strtrim.c)
+		libft/src/string/ft_strtrim.c libft/src/string/strbuilder.c libft/src/string/strbuilder_.h)
 
 set_target_properties(libft PROPERTIES PUBLIC_HEADER
         libft/inc/array_list.h

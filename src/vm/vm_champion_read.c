@@ -4,9 +4,9 @@
 #include "error.h"
 #include "vm.h"
 
-int	vm_verify_champ_header(t_champ *champ)
+static int	verify_champ_header(t_champ *champ)
 {
-	log_trace(__func__, "Verify header fields");
+	log_trace(__func__, "Verifying header fields");
 	if (champ->header.magic != COREWAR_EXEC_MAGIC)
 	{
 		log_error(__func__, "Champion '%s': invalid magic number: %#X",
@@ -28,12 +28,12 @@ int	vm_verify_champ_header(t_champ *champ)
 	return (1);
 }
 
-int	vm_read_champ_header(t_champ *champ, int fd)
+static int	read_champ_header(t_champ *champ, int fd)
 {
 	const size_t	hsize = sizeof(t_header);
 	int				reads;
 
-	log_trace(__func__, "Read champion's header");
+	log_trace(__func__, "Reading champion's header");
 	reads = read(fd, &champ->header, hsize);
 	log_debug(__func__, "Reads header: %d bytes", reads);
 	if (reads == -1)
@@ -49,15 +49,15 @@ int	vm_read_champ_header(t_champ *champ, int fd)
 	}
 	to_sys_endian(FT_BIG_ENDIAN, &champ->header.magic, 4);
 	to_sys_endian(FT_BIG_ENDIAN, &champ->header.prog_size, 4);
-	return (vm_verify_champ_header(champ));
+	return (verify_champ_header(champ));
 }
 
-int	vm_read_champ_code(t_champ *champ, int fd)
+static int	read_champ_code(t_champ *champ, int fd)
 {
 	const size_t	csize = champ->header.prog_size;
 	int				reads;
 
-	log_trace(__func__, "Read champion's exec code");
+	log_trace(__func__, "Reading champion's exec code");
 	reads = read(fd, &champ->code, CHAMP_MAX_SIZE + 1);
 	log_debug(__func__, "Reads exec code: %d bytes", reads);
 	if (reads == -1)
@@ -79,25 +79,25 @@ int	vm_read_champ_code(t_champ *champ, int fd)
 	return (1);
 }
 
-int	vm_read_champion(t_champ *champ, const char *path)
+int			vm_read_champion(t_champ *champ, const char *path)
 {
 	int fd;
 
 	ft_assert(champ != NULL, __func__, E_NULL_PTR);
-	log_trace(__func__, "Start reading champion from '%s'", path);
+	log_trace(__func__, "Reading champion from '%s'", path);
 	fd = open(path, O_RDONLY, 0200);
 	if (fd == -1)
 	{
 		log_error(__func__, "Cannot open file '%s': %m", path);
 		return (0);
 	}
-	if (!vm_read_champ_header(champ, fd) || !vm_read_champ_code(champ, fd))
+	if (!read_champ_header(champ, fd) || !read_champ_code(champ, fd))
 	{
-		log_error(__func__, "Read champion failed");
+		log_error(__func__, "Champion read failed");
 		return (0);
 	}
 	close(fd);
-	log_trace(__func__, "Successfully reads champion '%s'",
+	log_trace(__func__, "Champion '%s' read successfully",
 		champ->header.prog_name);
 	return (1);
 }

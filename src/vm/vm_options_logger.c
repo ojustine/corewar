@@ -1,14 +1,14 @@
-//#include "conv.h"
-//#include "str.h"
-//#include "vm.h"
-//
+#include "conv.h"
+#include "str.h"
+#include "vm.h"
+
 //int	vm_options_logger(int *i, int ac, char **av)
 //{
 //	int	ok;
 //
 //	ok = 1;
 //	i = 0;
-//	while (++i < ac)
+//	while (++*i < ac)
 //	{
 //		if (ft_strequ(av[i], "-d") || ft_strequ(av[i], "-s")
 //			|| ft_strequ(av[i], "-dump") || ft_strequ(av[i], "-step"))
